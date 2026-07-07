@@ -1,0 +1,13 @@
+.barra-navegacao-titulo {
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.barra-navegacao-espacador {
+  flex: 1 1 auto;
+}
+
+.barra-navegacao-link-ativo {
+  border-bottom: 2px solid var(--mat-sys-tertiary);
+}
+

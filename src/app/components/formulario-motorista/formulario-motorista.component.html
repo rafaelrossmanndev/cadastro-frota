@@ -1,0 +1,73 @@
+<div class="formulario-motorista">
+  <h1>{{ estaEditando() ? 'Editar motorista' : 'Novo motorista' }}</h1>
+
+  <form [formGroup]="formulario" (ngSubmit)="salvar()" class="formulario-motorista-grade">
+    <mat-form-field appearance="outline">
+      <mat-label>Nome completo</mat-label>
+      <input matInput formControlName="nome" required />
+      @if (formulario.controls.nome.hasError('required')) {
+        <mat-error>Nome é obrigatório.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>CPF</mat-label>
+      <input matInput formControlName="cpf" mask="000.000.000-00" required />
+      @if (formulario.controls.cpf.hasError('required')) {
+        <mat-error>CPF é obrigatório.</mat-error>
+      } @else if (formulario.controls.cpf.hasError('cpfInvalido')) {
+        <mat-error>CPF inválido.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Número da CNH</mat-label>
+      <input matInput formControlName="numeroCnh" required />
+      @if (formulario.controls.numeroCnh.hasError('required')) {
+        <mat-error>Número da CNH é obrigatório.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Categoria da CNH</mat-label>
+      <mat-select formControlName="categoriaCnh" required>
+        @for (categoria of categoriasCnh; track categoria) {
+          <mat-option [value]="categoria">{{ categoria }}</mat-option>
+        }
+      </mat-select>
+      @if (formulario.controls.categoriaCnh.hasError('required')) {
+        <mat-error>Selecione a categoria da CNH.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Validade da CNH</mat-label>
+      <input matInput [matDatepicker]="seletorDataCnh" formControlName="validadeCnh" required />
+      <mat-datepicker-toggle matIconSuffix [for]="seletorDataCnh"></mat-datepicker-toggle>
+      <mat-datepicker #seletorDataCnh></mat-datepicker>
+      @if (formulario.controls.validadeCnh.hasError('required')) {
+        <mat-error>Informe a validade da CNH.</mat-error>
+      } @else if (formulario.controls.validadeCnh.hasError('cnhVencida')) {
+        <mat-error>CNH vencida — informe uma data futura.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Telefone</mat-label>
+      <input matInput formControlName="telefone" mask="(00) 00000-0000||(00) 0000-0000" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>E-mail</mat-label>
+      <input matInput formControlName="email" type="email" />
+      @if (formulario.controls.email.hasError('email')) {
+        <mat-error>E-mail inválido.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="formulario-motorista-acoes">
+      <button mat-stroked-button type="button" routerLink="/motoristas">Cancelar</button>
+      <button mat-flat-button class="botao-terciario" type="submit">Salvar</button>
+    </div>
+  </form>
+</div>

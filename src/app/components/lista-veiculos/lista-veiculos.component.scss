@@ -1,0 +1,25 @@
+.lista-veiculos {
+  padding: 24px;
+}
+
+.lista-veiculos-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.lista-veiculos-busca {
+  width: 100%;
+  max-width: 360px;
+}
+
+.lista-veiculos-tabela {
+  width: 100%;
+}
+
+.lista-veiculos-vazio {
+  color: var(--mat-sys-outline);
+  text-align: center;
+  padding: 32px;
+}

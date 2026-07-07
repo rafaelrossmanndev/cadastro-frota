@@ -1,0 +1,35 @@
+.lista-motoristas {
+  padding: 24px;
+}
+
+.lista-motoristas-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.lista-motoristas-busca {
+  width: 100%;
+  max-width: 360px;
+}
+
+.lista-motoristas-tabela {
+  width: 100%;
+}
+
+.lista-motoristas-vazio {
+  color: var(--mat-sys-outline);
+  text-align: center;
+  padding: 32px;
+}
+
+.lista-motoristas-texto-sucesso {
+  color: var(--app-cor-sucesso);
+  font-weight: 500;
+}
+
+.lista-motoristas-texto-erro {
+  color: var(--mat-sys-error);
+  font-weight: 500;
+}

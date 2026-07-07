@@ -1,0 +1,17 @@
+.formulario-motorista {
+  padding: 24px;
+  max-width: 640px;
+}
+
+.formulario-motorista-grade {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formulario-motorista-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}

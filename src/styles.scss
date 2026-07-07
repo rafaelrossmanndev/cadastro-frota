@@ -1,0 +1,40 @@
+@use '@angular/material' as mat;
+@use './styles/theme-colors' as theme;
+
+html {
+  color-scheme: light dark;
+
+  @include mat.theme((
+    color: (
+      primary: theme.$paleta-primaria,
+      tertiary: theme.$paleta-terciaria,
+      theme-type: color-scheme,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+
+  & {
+    --mat-sys-background: light-dark(#f5f5f0, #0a0a0c);
+    --mat-sys-on-background: light-dark(#0a0a0c, #f5f5f0);
+    --mat-sys-surface: light-dark(#f5f5f0, #0a0a0c);
+    --mat-sys-on-surface: light-dark(#0a0a0c, #f5f5f0);
+
+    --app-cor-sucesso: #26a269;
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.botao-terciario {
+  --mdc-filled-button-container-color: var(--mat-sys-tertiary);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-tertiary);
+}

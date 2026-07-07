@@ -1,0 +1,73 @@
+<div class="lista-motoristas">
+  <div class="lista-motoristas-cabecalho">
+    <h1>Motoristas</h1>
+    <a mat-flat-button class="botao-terciario" routerLink="/motoristas/novo">
+      <mat-icon>add</mat-icon>
+      Novo motorista
+    </a>
+  </div>
+
+  <mat-form-field appearance="outline" class="lista-motoristas-busca">
+    <mat-label>Buscar por nome ou CPF</mat-label>
+    <input matInput [value]="termoBusca()" (input)="aoDigitarBusca($event)" />
+    <mat-icon matIconSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <table mat-table [dataSource]="motoristasFiltrados()" class="lista-motoristas-tabela">
+    <ng-container matColumnDef="nome">
+      <th mat-header-cell *matHeaderCellDef>Nome</th>
+      <td mat-cell *matCellDef="let motorista">{{ motorista.nome }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="cpf">
+      <th mat-header-cell *matHeaderCellDef>CPF</th>
+      <td mat-cell *matCellDef="let motorista">{{ formatarCpf(motorista.cpf) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="cnh">
+      <th mat-header-cell *matHeaderCellDef>CNH</th>
+      <td mat-cell *matCellDef="let motorista">{{ motorista.numeroCnh }} ({{ motorista.categoriaCnh }})</td>
+    </ng-container>
+
+    <ng-container matColumnDef="validadeCnh">
+      <th mat-header-cell *matHeaderCellDef>Validade da CNH</th>
+      <td mat-cell *matCellDef="let motorista">
+        @if (cnhVencida(motorista)) {
+          <span class="lista-motoristas-texto-erro">
+            Vencida em {{ motorista.validadeCnh | date: 'dd/MM/yyyy' }}
+          </span>
+        } @else {
+          <span class="lista-motoristas-texto-sucesso">
+            Válida até {{ motorista.validadeCnh | date: 'dd/MM/yyyy' }}
+          </span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="contato">
+      <th mat-header-cell *matHeaderCellDef>Contato</th>
+      <td mat-cell *matCellDef="let motorista">
+        {{ motorista.telefone || motorista.email || '—' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef>Ações</th>
+      <td mat-cell *matCellDef="let motorista">
+        <a mat-icon-button [routerLink]="['/motoristas', motorista.id, 'editar']" matTooltip="Editar">
+          <mat-icon>edit</mat-icon>
+        </a>
+        <button mat-icon-button matTooltip="Excluir" (click)="removerMotorista(motorista)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="colunasExibidas"></tr>
+    <tr mat-row *matRowDef="let row; columns: colunasExibidas"></tr>
+  </table>
+
+  @if (motoristasFiltrados().length === 0) {
+    <p class="lista-motoristas-vazio">Nenhum motorista encontrado.</p>
+  }
+</div>

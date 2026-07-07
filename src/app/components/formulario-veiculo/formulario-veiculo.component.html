@@ -1,0 +1,66 @@
+<div class="formulario-veiculo">
+  <h1>{{ estaEditando() ? 'Editar veículo' : 'Novo veículo' }}</h1>
+
+  <form [formGroup]="formulario" (ngSubmit)="salvar()" class="formulario-veiculo-grade">
+    <mat-form-field appearance="outline">
+      <mat-label>Placa</mat-label>
+      <input matInput formControlName="placa" maxlength="8" placeholder="ABC1234 ou ABC1D23" required />
+      @if (formulario.controls.placa.hasError('required')) {
+        <mat-error>Placa é obrigatória.</mat-error>
+      } @else if (formulario.controls.placa.hasError('placaInvalida')) {
+        <mat-error>Formato inválido. Use AAA-9999 (antigo) ou AAA9A99 (Mercosul).</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Marca</mat-label>
+      <input matInput formControlName="marca" required />
+      @if (formulario.controls.marca.hasError('required')) {
+        <mat-error>Marca é obrigatória.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Modelo</mat-label>
+      <input matInput formControlName="modelo" required />
+      @if (formulario.controls.modelo.hasError('required')) {
+        <mat-error>Modelo é obrigatório.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ano de fabricação</mat-label>
+      <input matInput type="number" formControlName="anoFabricacao" required />
+      @if (formulario.controls.anoFabricacao.hasError('required')) {
+        <mat-error>Ano de fabricação é obrigatório.</mat-error>
+      } @else if (formulario.controls.anoFabricacao.hasError('min') || formulario.controls.anoFabricacao.hasError('max')) {
+        <mat-error>Informe um ano válido.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cor</mat-label>
+      <input matInput formControlName="cor" required />
+      @if (formulario.controls.cor.hasError('required')) {
+        <mat-error>Cor é obrigatória.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Motorista responsável</mat-label>
+      <mat-select formControlName="motoristaId" required>
+        @for (motorista of motoristas(); track motorista.id) {
+          <mat-option [value]="motorista.id">{{ motorista.nome }}</mat-option>
+        }
+      </mat-select>
+      @if (formulario.controls.motoristaId.hasError('required')) {
+        <mat-error>Selecione um motorista responsável.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="formulario-veiculo-acoes">
+      <button mat-stroked-button type="button" routerLink="/veiculos">Cancelar</button>
+      <button mat-flat-button class="botao-terciario" type="submit">Salvar</button>
+    </div>
+  </form>
+</div>
