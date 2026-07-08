@@ -1,6 +1,12 @@
 @use '@angular/material' as mat;
 @use './styles/theme-colors' as theme;
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   color-scheme: light dark;
 

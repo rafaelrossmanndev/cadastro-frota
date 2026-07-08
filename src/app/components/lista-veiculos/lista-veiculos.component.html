@@ -13,49 +13,91 @@
     <mat-icon matIconSuffix>search</mat-icon>
   </mat-form-field>
 
-  <table mat-table [dataSource]="linhasFiltradas()" class="lista-veiculos-tabela">
-    <ng-container matColumnDef="placa">
-      <th mat-header-cell *matHeaderCellDef>Placa</th>
-      <td mat-cell *matCellDef="let veiculo" data-label="Placa">{{ veiculo.placa }}</td>
-    </ng-container>
+  <!-- Visualização Desktop (Tabela) -->
+  <div class="lista-veiculos-desktop-container">
+    <table mat-table [dataSource]="linhasFiltradas()" class="lista-veiculos-tabela">
+      <ng-container matColumnDef="placa">
+        <th mat-header-cell *matHeaderCellDef>Placa</th>
+        <td mat-cell *matCellDef="let veiculo">{{ veiculo.placa }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="veiculo">
-      <th mat-header-cell *matHeaderCellDef>Veículo</th>
-      <td mat-cell *matCellDef="let veiculo" data-label="Veículo">{{ veiculo.marca }} {{ veiculo.modelo }}</td>
-    </ng-container>
+      <ng-container matColumnDef="veiculo">
+        <th mat-header-cell *matHeaderCellDef>Veículo</th>
+        <td mat-cell *matCellDef="let veiculo">{{ veiculo.marca }} {{ veiculo.modelo }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="anoFabricacao">
-      <th mat-header-cell *matHeaderCellDef>Ano</th>
-      <td mat-cell *matCellDef="let veiculo" data-label="Ano">{{ veiculo.anoFabricacao }}</td>
-    </ng-container>
+      <ng-container matColumnDef="anoFabricacao">
+        <th mat-header-cell *matHeaderCellDef>Ano</th>
+        <td mat-cell *matCellDef="let veiculo">{{ veiculo.anoFabricacao }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="cor">
-      <th mat-header-cell *matHeaderCellDef>Cor</th>
-      <td mat-cell *matCellDef="let veiculo" data-label="Cor">{{ veiculo.cor }}</td>
-    </ng-container>
+      <ng-container matColumnDef="cor">
+        <th mat-header-cell *matHeaderCellDef>Cor</th>
+        <td mat-cell *matCellDef="let veiculo">{{ veiculo.cor }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="motorista">
-      <th mat-header-cell *matHeaderCellDef>Motorista</th>
-      <td mat-cell *matCellDef="let veiculo" data-label="Motorista">{{ veiculo.nomeMotorista }}</td>
-    </ng-container>
+      <ng-container matColumnDef="motorista">
+        <th mat-header-cell *matHeaderCellDef>Motorista</th>
+        <td mat-cell *matCellDef="let veiculo">{{ veiculo.nomeMotorista }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="acoes">
-      <th mat-header-cell *matHeaderCellDef>Ações</th>
-      <td mat-cell *matCellDef="let veiculo" data-label="Ações" class="lista-veiculos-acoes-celula">
-        <a mat-icon-button [routerLink]="['/veiculos', veiculo.id, 'editar']" matTooltip="Editar">
-          <mat-icon>edit</mat-icon>
-        </a>
-        <button mat-icon-button matTooltip="Excluir" (click)="removerVeiculo(veiculo)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
+        <td mat-cell *matCellDef="let veiculo">
+          <a mat-icon-button [routerLink]="['/veiculos', veiculo.id, 'editar']" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </a>
+          <button mat-icon-button matTooltip="Excluir" (click)="removerVeiculo(veiculo)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="colunasExibidas"></tr>
-    <tr mat-row *matRowDef="let row; columns: colunasExibidas"></tr>
-  </table>
+      <tr mat-header-row *matHeaderRowDef="colunasExibidas"></tr>
+      <tr mat-row *matRowDef="let row; columns: colunasExibidas"></tr>
+    </table>
+  </div>
+
+  <!-- Visualização Mobile (Lista de Cards) -->
+  <div class="lista-veiculos-mobile-container">
+    @for (veiculo of linhasFiltradas(); track veiculo.id) {
+      <div class="card-veiculo-mobile">
+        <div class="card-veiculo-header">
+          <span class="card-veiculo-marca-modelo">{{ veiculo.marca }} {{ veiculo.modelo }}</span>
+          <span class="card-veiculo-placa badge-placa">{{ veiculo.placa }}</span>
+        </div>
+        
+        <div class="card-veiculo-detalhes">
+          <div class="card-veiculo-linha">
+            <span class="card-label">Ano</span>
+            <span class="card-valor">{{ veiculo.anoFabricacao }}</span>
+          </div>
+
+          <div class="card-veiculo-linha">
+            <span class="card-label">Cor</span>
+            <span class="card-valor">{{ veiculo.cor }}</span>
+          </div>
+
+          <div class="card-veiculo-linha">
+            <span class="card-label">Motorista</span>
+            <span class="card-valor">{{ veiculo.nomeMotorista }}</span>
+          </div>
+        </div>
+
+        <div class="card-veiculo-acoes">
+          <a mat-icon-button [routerLink]="['/veiculos', veiculo.id, 'editar']" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </a>
+          <button mat-icon-button matTooltip="Excluir" (click)="removerVeiculo(veiculo)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
 
   @if (linhasFiltradas().length === 0) {
     <p class="lista-veiculos-vazio">Nenhum veículo encontrado.</p>
   }
 </div>
+

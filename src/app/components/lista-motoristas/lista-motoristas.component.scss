@@ -14,6 +14,10 @@
   max-width: 360px;
 }
 
+.lista-motoristas-tabela-container {
+  overflow-x: auto;
+}
+
 .lista-motoristas-tabela {
   width: 100%;
 }
@@ -32,6 +36,14 @@
 .lista-motoristas-texto-erro {
   color: var(--mat-sys-error);
   font-weight: 500;
+}
+
+.lista-motoristas-desktop-container {
+  display: block;
+}
+
+.lista-motoristas-mobile-container {
+  display: none;
 }
 
 @media (max-width: 768px) {
@@ -55,59 +67,86 @@
     max-width: 100%;
   }
 
-  .lista-motoristas-tabela {
-    display: block;
-    background: transparent !important;
-    box-shadow: none !important;
+  .lista-motoristas-desktop-container {
+    display: none;
+  }
 
-    thead, tr[mat-header-row] {
-      display: none;
-    }
+  .lista-motoristas-mobile-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-    tr[mat-row] {
-      display: block;
-      margin-bottom: 16px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: var(--mat-sys-surface-container-low, #fff);
-      border: 1px solid var(--mat-sys-outline-variant);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      
-      @media (prefers-color-scheme: dark) {
-        background: #111014;
-      }
-    }
+  .card-motorista-mobile {
+    background: var(--mat-sys-surface-container-low, #fff);
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 
-    td[mat-cell] {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px dashed var(--mat-sys-outline-variant);
-      font-size: 0.9rem;
-      min-height: 32px;
-      text-align: right;
-
-      &::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--mat-sys-on-surface-variant);
-        font-size: 0.85rem;
-        margin-right: 16px;
-        text-align: left;
-      }
-
-      &.lista-motoristas-acoes-celula {
-        border-bottom: none;
-        justify-content: flex-end;
-        padding-bottom: 0;
-        margin-top: 4px;
-        
-        &::before {
-          display: none;
-        }
-      }
+    @media (prefers-color-scheme: dark) {
+      background: #111014;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
   }
+
+  .card-motorista-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    padding-bottom: 8px;
+  }
+
+  .card-motorista-nome {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--mat-sys-on-surface);
+  }
+
+  .badge-categoria {
+    background-color: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .card-motorista-detalhes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-motorista-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+  }
+
+  .card-label {
+    font-weight: 500;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.85rem;
+  }
+
+  .card-valor {
+    color: var(--mat-sys-on-surface);
+    font-weight: 500;
+  }
+
+  .card-motorista-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid var(--mat-sys-outline-variant);
+    padding-top: 8px;
+  }
 }
+
 

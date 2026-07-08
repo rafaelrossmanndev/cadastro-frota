@@ -52,7 +52,7 @@ export class AuthService {
   private carregarSessao(): void {
     try {
       const sessaoSalva = localStorage.getItem(CHAVE_SESSAO);
-      if (sessaoSalva) {
+      if (sessaoSalva && sessaoSalva !== 'null' && sessaoSalva !== 'undefined') {
         const usuario: UsuarioAutenticado = JSON.parse(sessaoSalva);
         this.#usuarioLogado.set(usuario);
       }
