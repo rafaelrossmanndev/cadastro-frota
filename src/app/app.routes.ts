@@ -53,6 +53,12 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  {
+    path: 'mapa',
+    loadComponent: () =>
+      import('./components/mapa/mapa.component').then((m) => m.MapaComponent),
+    canActivate: [authGuard],
+  },
   { path: '**', redirectTo: 'motoristas' },
 ];
 

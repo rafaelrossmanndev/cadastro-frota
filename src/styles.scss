@@ -1,6 +1,8 @@
 @use '@angular/material' as mat;
 @use './styles/theme-colors' as theme;
 
+@import 'leaflet/dist/leaflet.css';
+
 *,
 *::before,
 *::after {
