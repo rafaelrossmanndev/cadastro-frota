@@ -21,12 +21,49 @@ html {
   ));
 
   & {
-    --mat-sys-background: light-dark(#f5f5f0, #0a0a0c);
-    --mat-sys-on-background: light-dark(#0a0a0c, #f5f5f0);
-    --mat-sys-surface: light-dark(#f5f5f0, #0a0a0c);
-    --mat-sys-on-surface: light-dark(#0a0a0c, #f5f5f0);
+    /* Design Claro (Padrão) */
+    --mat-sys-background: #f4f6fb;
+    --mat-sys-on-background: #0d1020;
+    --mat-sys-surface: #ffffff;
+    --mat-sys-on-surface: #0d1020;
+    --mat-sys-surface-container: #ffffff;
+    --mat-sys-surface-container-low: #ffffff;
+    --mat-sys-surface-container-high: #eaecf5;
+    --mat-sys-outline-variant: #d0d5e8;
+    --mat-sys-on-surface-variant: #4a5068;
+
+    --mat-sys-primary: #2e6ef5;
+    --mat-sys-on-primary: #ffffff;
+    --mat-sys-primary-container: #eaecf5;
+    --mat-sys-on-primary-container: #2e6ef5;
+
+    --mat-sys-tertiary: #2e6ef5;
+    --mat-sys-on-tertiary: #ffffff;
 
     --app-cor-sucesso: #26a269;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      /* Design Escuro (Opção) */
+      --mat-sys-background: #0b0b0b;
+      --mat-sys-on-background: #ffffff;
+      --mat-sys-surface: #141414;
+      --mat-sys-on-surface: #ffffff;
+      --mat-sys-surface-container: #141414;
+      --mat-sys-surface-container-low: #141414;
+      --mat-sys-surface-container-high: #1c1c1c;
+      --mat-sys-outline-variant: #242424;
+      --mat-sys-on-surface-variant: #666666;
+
+      --mat-sys-primary: #4f8ef7;
+      --mat-sys-on-primary: #ffffff;
+      --mat-sys-primary-container: #0d1b3e;
+      --mat-sys-on-primary-container: #4f8ef7;
+
+      --mat-sys-tertiary: #4f8ef7;
+      --mat-sys-on-tertiary: #ffffff;
+    }
   }
 }
 
@@ -40,7 +77,31 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+/* Gradientes Oficiais de Botões Primários */
+.mat-mdc-flat-button.mat-primary,
+.mat-mdc-raised-button.mat-primary {
+  background: linear-gradient(135deg, #6ba3f9, #2e6ef5) !important;
+  color: #ffffff !important;
+  
+  @media (prefers-color-scheme: dark) {
+    background: linear-gradient(135deg, #4f8ef7, #0d1b3e) !important;
+  }
+}
+
 .botao-terciario {
   --mdc-filled-button-container-color: var(--mat-sys-tertiary);
   --mdc-filled-button-label-text-color: var(--mat-sys-on-tertiary);
 }
+
+/* Customização do Header (Toolbar) e Cabeçalho da Tabela para Destaque */
+.mat-mdc-toolbar.mat-primary {
+  background-color: var(--mat-sys-surface-container-high) !important;
+  color: var(--mat-sys-on-surface) !important;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+tr.mat-mdc-header-row {
+  background-color: var(--mat-sys-surface-container-high) !important;
+}
+
+

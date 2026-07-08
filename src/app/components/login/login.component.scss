@@ -8,6 +8,10 @@
   background-color: var(--mat-sys-background);
   color: var(--mat-sys-on-background);
   box-sizing: border-box;
+
+  @media (prefers-color-scheme: dark) {
+    background: radial-gradient(ellipse at 50% 40%, #0d1b3e, #0b0b0b); /* Noite Profunda */
+  }
 }
 
 .login-wrapper {
@@ -27,7 +31,7 @@
   transition: all 0.3s ease;
 
   @media (prefers-color-scheme: dark) {
-    background: #111014;
+    background: linear-gradient(135deg, #1e1e1e, #141414); /* Grafite Suave */
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
 }
