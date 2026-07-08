@@ -6,10 +6,25 @@
 
   <a mat-button routerLink="/motoristas" routerLinkActive="barra-navegacao-link-ativo">
     <mat-icon>badge</mat-icon>
-    Motoristas
+    <span class="barra-navegacao-link-texto">Motoristas</span>
   </a>
   <a mat-button routerLink="/veiculos" routerLinkActive="barra-navegacao-link-ativo">
     <mat-icon>directions_car</mat-icon>
-    Veículos
+    <span class="barra-navegacao-link-texto">Veículos</span>
   </a>
+
+  <button mat-icon-button [matMenuTriggerFor]="menuPerfil" class="barra-navegacao-perfil">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #menuPerfil="matMenu" xPosition="before">
+    <div class="barra-navegacao-menu-info">
+      <div class="barra-navegacao-menu-nome">{{ authService.usuarioLogado()?.nome }}</div>
+      <div class="barra-navegacao-menu-cargo">{{ authService.usuarioLogado()?.cargo }}</div>
+    </div>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Sair</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>
+

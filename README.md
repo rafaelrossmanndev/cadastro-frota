@@ -1,57 +1,110 @@
-# Cadastro de Frota
+# 🚚 Gestão de Frota (White Label)
 
-Mini-projeto de estudo: cadastro de Frota (Motoristas e Veículos), 100% frontend, com dados em memória (sem backend). Feito com Angular 19 (standalone, Signals, novo control flow `@if`/`@for`), Angular Material com tema Material 3 customizado e `ngx-mask`.
+Este projeto é uma aplicação web **White Label** para **Gestão de Frotas** (cadastro de Motoristas e Veículos). Ele foi desenvolvido para rodar 100% no frontend (dados salvos em memória e simulados de forma reativa).
 
-## Como rodar
+Acesse a aplicação online hospedada na Vercel: **[https://cadastro-frota.vercel.app/](https://cadastro-frota.vercel.app/)**
 
-Requer Node 22 (ver `.nvmrc`).
+---
 
-```bash
-nvm use
-npm install
-npx ng serve
-```
+## 🎨 Conceito White Label & Identidade
 
-Acesse `http://localhost:4200` — a rota inicial redireciona para `/motoristas`.
+Como uma aplicação White Label (onde a plataforma é licenciada para que outras empresas apliquem sua própria identidade), a tela de login foi projetada para destacar o logotipo personalizável do cliente. 
 
-## Funcionalidades
+O projeto conta com um logotipo fictício de demonstração contendo o selo **"Seu Logo Aqui"**, integrado à paleta de cores padrão do projeto:
+* **Primary (Aubergine/Vinho):** `#2C001E`
+* **Tertiary (Laranja):** `#E95420`
+* **Neutral (Cinza-quente):** `#AEA79F`
 
-- **Motoristas**: listar, cadastrar, editar e excluir. Validação de CPF (algoritmo real dos dígitos verificadores) e de validade da CNH (não pode estar vencida).
-- **Veículos**: listar, cadastrar, editar e excluir, sempre vinculados a um motorista responsável. Validação de placa nos dois formatos brasileiros (antigo `AAA-9999` e Mercosul `AAA9A99`).
+---
 
-## Arquitetura
+## 📱 Responsividade & UI/UX Mobile
+
+A aplicação foi completamente adaptada para dispositivos móveis seguindo as melhores práticas de design de interface:
+* **Transformação de Tabelas em Cartões:** Em telas pequenas (< 768px), as tabelas de listagem (`lista-motoristas` e `lista-veiculos`) deixam de ser exibidas no formato clássico de linhas horizontais e são dinamicamente transformadas em **cartões empilhados verticais** com bordas arredondadas e divisores dashed. Isso é feito via CSS puro (`display: block` nas tags de tabela + atributos `data-label` gerando legendas), proporcionando excelente legibilidade.
+* **Barra de Navegação Adaptável:** No celular, o título da barra de navegação é ocultado e os textos dos botões são removidos, mantendo apenas os ícones correspondentes para preservar o espaço horizontal.
+* **Formulários Responsivos:** Os formulários de cadastro possuem preenchimento de tela cheia em dispositivos menores, e os botões de ação ("Salvar" e "Cancelar") são empilhados verticalmente em ordem lógica reversa, facilitando o toque com o polegar.
+
+---
+
+## 🔒 Arquitetura de Autenticação (Simulação Real)
+
+A aplicação conta com um sistema de login simulado que emula fielmente o fluxo de uma arquitetura Angular corporativa real:
+
+1. **Serviço de Autenticação (`auth.service.ts`):** 
+   * Controla o estado de autenticação de forma centralizada utilizando **Signals** do Angular 19 (`isAuthenticated` e `usuarioLogado` expostos de forma somente leitura).
+   * O método de login retorna um `Observable<boolean>` do RxJS simulando um atraso de rede de 1.2 segundos para demonstrar estados de carregamento (spinner/progress bar).
+   * Persiste o estado do usuário logado no `localStorage` do navegador para que a sessão não seja perdida ao recarregar a página.
+2. **Guardião de Rotas (`auth.guard.ts`):** 
+   * **`authGuard`**: Protege todas as rotas internas da aplicação (listas e formulários). Caso um usuário não autenticado tente acessá-las, é redirecionado para a tela de login.
+   * **`guestGuard`**: Impede que um usuário já autenticado acesse a tela de login `/login`, redirecionando-o automaticamente para `/motoristas`.
+3. **Tela de Login (`login.component.ts`):** 
+   * Desenvolvida com formulários reativos (`ReactiveFormsModule`) e Material Design.
+   * Contém recurso de revelação/ocultação de senha (botão de olho).
+   * Validação visual com mensagens de erro.
+   * Exibição de dica contendo as credenciais de teste para o avaliador.
+
+### 🔑 Credenciais para Teste
+* **Usuário:** `admin`
+* **Senha:** `admin123`
+
+---
+
+## 🏗️ Estrutura do Projeto & Arquitetura
+
+A arquitetura do projeto segue o padrão de responsabilidade única e desacoplamento em camadas:
 
 ```
 src/app/
-├── models/        # Driver, Vehicle — interfaces do domínio (sem lógica)
-├── services/       # DriverService, VehicleService — "banco de dados" em memória (Signal) + CRUD
-├── validators/     # cpfValidator, plateValidator, cnhValidityValidator — regras de negócio puras
+├── models/         # Interfaces de domínio (motorista, veiculo, auth)
+├── services/       # Serviços centralizados com dados em memória usando Signals
+├── validators/     # Validadores de regras de negócio (CPF, Placas no padrão Mercosul e antigo, validade CNH)
+├── guards/         # Guardiões de rotas (authGuard, guestGuard)
 └── components/
-    ├── navbar/
-    ├── driver-list/  vehicle-list/   # mat-table
-    └── driver-form/  vehicle-form/   # Reactive Forms
+    ├── barra-navegacao/ # Barra de ferramentas com links e menu de perfil
+    ├── login/           # Tela de autenticação White Label
+    ├── lista-motoristas/
+    ├── formulario-motorista/
+    ├── lista-veiculos/
+    └── formulario-veiculo/
 ```
 
-Separação em camadas: `models` descreve os dados, `services` guarda e muta o estado (a única fonte de verdade — nenhum componente mantém cópia própria da lista), `validators` isola as regras de validação do domínio brasileiro (CPF/placa/CNH) do formulário em si, e `components` só orquestra essas três camadas. Um novo domínio (ex.: "Manutenções") seguiria exatamente o mesmo padrão: um model, um service com o mesmo formato de CRUD (`getAll`/`getById`/`add`/`update`/`remove` sobre um `signal<T[]>`), validators próprios se necessário, e list/form components — sem precisar inventar uma estrutura nova.
+* **Models:** Apenas descrevem as estruturas dos dados (`interfaces` e `types`).
+* **Services:** Centralizam e controlam a manipulação do estado global do app (CRUDs usando Signals). Nenhum componente duplica ou gerencia dados originais diretamente.
+* **Validators:** Funções TypeScript puras (`ValidatorFn`) reaproveitáveis que validam campos sem misturar regras de negócio ao arquivo do componente.
+* **Guards:** Controlam os fluxos de acesso a nível de rotas.
+* **Components:** Componentes Standalone focados estritamente na interface do usuário (UI) e orquestração.
 
-Por que Reactive Forms em vez de template-driven: os validadores de domínio (CPF, placa, CNH) são funções TypeScript puras (`ValidatorFn`), testáveis isoladamente e reaproveitáveis entre `driver-form` e `vehicle-form`, sem duplicar regra de negócio no template.
+---
 
-## Tema (Material 3)
+## 🛠️ Tecnologias Utilizadas
 
-O tema é gerado a partir da paleta de marca fornecida, usando o schematic oficial `ng generate @angular/material:theme-color`, que aplica o algoritmo HCT do Material 3 para transformar cada cor-semente em uma paleta tonal completa (13-16 tons):
+* **Angular 19** (Standalone Components, Signals, Novo Control Flow `@if`/`@for`).
+* **Angular Material 3** (Customizado a partir das cores de marca).
+* **RxJS** (para fluxos de carregamento assíncronos e reatividade).
+* **ngx-mask** (máscaras de telefone, CPF e CNH).
+* **Sass (SCSS)** (para folha de estilos estruturada e responsividade por media queries).
 
-| Cor da marca | Hex | Papel no tema M3 |
-|---|---|---|
-| Aubergine | `#2C001E` | **Primary** — cor principal (toolbar, botões primários) |
-| Laranja | `#E95420` | **Tertiary** — ações/destaque (classe utilitária `.btn-tertiary`, ver `styles.scss`) |
-| Cinza-quente | `#AEA79F` | **Neutral** — semente de superfícies/bordas/outline |
-| Ruby/crimson | `#B0173B` | **Error** — cor de erro escolhida por combinar com o roxo (undertone vinho) e contrastar com o laranja, evitando confusão visual entre "erro" e "ação" |
-| Porcelana | `#F5F5F0` | Fundo/superfície no modo claro |
-| Preto-jato | `#0A0A0C` | Fundo/superfície no modo escuro |
-| Verde | `#26A269` | **Sucesso** (ver abaixo) |
+---
 
-O Material 3 só tem 5 papéis nativos (primary/secondary/tertiary/error/neutral) — não existe um slot para "sucesso". Por isso `#26A269` foi modelado como uma custom property própria da aplicação (`--app-color-success`, fora do namespace `--mat-sys-*` do Material), usada manualmente onde o domínio precisa de um sinal positivo — por exemplo, o badge "CNH válida" em `driver-list`. Isso mantém a extensão isolada e explícita, em vez de forçar a cor dentro de um papel do Material que não é dela.
+## 🚀 Como Executar Localmente
 
-Dark mode: as duas variantes (clara/escura) são geradas automaticamente a partir das mesmas sementes via `theme-type: color-scheme` + `color-scheme: light dark`, sem precisar duplicar a definição do tema — o Material resolve qual variante usar em cada token `--mat-sys-*` conforme a preferência do sistema operacional.
+### Pré-requisitos
+Certifique-se de possuir o **Node 22** instalado (consulte o arquivo `.nvmrc` se utilizar um gerenciador de versão).
 
-Arquivos: `src/styles/_theme-colors.scss` (gerado pelo schematic, não editar à mão) e `src/styles.scss` (aplica o tema via `mat.theme()` e documenta cada decisão inline).
+### Passo a Passo
+
+1. Instale as dependências do projeto:
+   ```bash
+   npm install
+   ```
+
+2. Execute o servidor de desenvolvimento local:
+   ```bash
+   npm run start
+   ```
+
+3. Acesse em seu navegador:
+   ```
+   http://localhost:4200
+   ```
+   A rota padrão do sistema redirecionará você para `/login`. Utilize as credenciais `admin` / `admin123` para acessar as listagens de Motoristas e Veículos.

@@ -15,3 +15,23 @@
   gap: 12px;
   margin-top: 16px;
 }
+
+@media (max-width: 600px) {
+  .formulario-motorista {
+    padding: 16px;
+
+    h1 {
+      font-size: 1.6rem;
+      margin-top: 8px;
+    }
+  }
+
+  .formulario-motorista-acoes {
+    flex-direction: column-reverse;
+    
+    button {
+      width: 100%;
+    }
+  }
+}
+

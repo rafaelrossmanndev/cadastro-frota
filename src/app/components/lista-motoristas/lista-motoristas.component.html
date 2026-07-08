@@ -16,22 +16,22 @@
   <table mat-table [dataSource]="motoristasFiltrados()" class="lista-motoristas-tabela">
     <ng-container matColumnDef="nome">
       <th mat-header-cell *matHeaderCellDef>Nome</th>
-      <td mat-cell *matCellDef="let motorista">{{ motorista.nome }}</td>
+      <td mat-cell *matCellDef="let motorista" data-label="Nome">{{ motorista.nome }}</td>
     </ng-container>
 
     <ng-container matColumnDef="cpf">
       <th mat-header-cell *matHeaderCellDef>CPF</th>
-      <td mat-cell *matCellDef="let motorista">{{ formatarCpf(motorista.cpf) }}</td>
+      <td mat-cell *matCellDef="let motorista" data-label="CPF">{{ formatarCpf(motorista.cpf) }}</td>
     </ng-container>
 
     <ng-container matColumnDef="cnh">
       <th mat-header-cell *matHeaderCellDef>CNH</th>
-      <td mat-cell *matCellDef="let motorista">{{ motorista.numeroCnh }} ({{ motorista.categoriaCnh }})</td>
+      <td mat-cell *matCellDef="let motorista" data-label="CNH">{{ motorista.numeroCnh }} ({{ motorista.categoriaCnh }})</td>
     </ng-container>
 
     <ng-container matColumnDef="validadeCnh">
       <th mat-header-cell *matHeaderCellDef>Validade da CNH</th>
-      <td mat-cell *matCellDef="let motorista">
+      <td mat-cell *matCellDef="let motorista" data-label="Validade da CNH">
         @if (cnhVencida(motorista)) {
           <span class="lista-motoristas-texto-erro">
             Vencida em {{ motorista.validadeCnh | date: 'dd/MM/yyyy' }}
@@ -46,14 +46,14 @@
 
     <ng-container matColumnDef="contato">
       <th mat-header-cell *matHeaderCellDef>Contato</th>
-      <td mat-cell *matCellDef="let motorista">
+      <td mat-cell *matCellDef="let motorista" data-label="Contato">
         {{ motorista.telefone || motorista.email || '—' }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="acoes">
       <th mat-header-cell *matHeaderCellDef>Ações</th>
-      <td mat-cell *matCellDef="let motorista">
+      <td mat-cell *matCellDef="let motorista" data-label="Ações" class="lista-motoristas-acoes-celula">
         <a mat-icon-button [routerLink]="['/motoristas', motorista.id, 'editar']" matTooltip="Editar">
           <mat-icon>edit</mat-icon>
         </a>

@@ -1,0 +1,83 @@
+<div class="login-container">
+  <div class="login-wrapper">
+    <!-- Lado Esquerdo: Marca White Label -->
+    <div class="login-marca-secao">
+      <div class="login-logo-container">
+        <img src="/seu-logo-aqui.png" alt="Seu Logo Aqui" class="login-logo-imagem" />
+      </div>
+      <div class="login-marca-texto">
+        <h2>Gestão de Frota</h2>
+        <p>Sua marca, sua frota, seu controle.</p>
+      </div>
+    </div>
+
+    <!-- Divisor vertical (exibido apenas em telas grandes) -->
+    <div class="login-divisor"></div>
+
+    <!-- Lado Direito: Formulário de Login -->
+    <div class="login-formulario-secao">
+      <mat-card class="login-card">
+        <mat-card-header>
+          <mat-card-title>Acessar Sistema</mat-card-title>
+          <mat-card-subtitle>Insira suas credenciais abaixo</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          @if (carregando()) {
+            <mat-progress-bar mode="indeterminate" class="login-progresso"></mat-progress-bar>
+          }
+
+          <form [formGroup]="formulario" (ngSubmit)="entrar()" class="login-form">
+            <!-- Usuário -->
+            <mat-form-field appearance="outline" class="login-campo">
+              <mat-label>Usuário</mat-label>
+              <input matInput formControlName="usuario" placeholder="Nome de usuário" required />
+              <mat-icon matSuffix>person</mat-icon>
+              @if (formulario.get('usuario')?.hasError('required')) {
+                <mat-error>Usuário é obrigatório.</mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Senha -->
+            <mat-form-field appearance="outline" class="login-campo">
+              <mat-label>Senha</mat-label>
+              <input
+                matInput
+                [type]="senhaVisivel() ? 'text' : 'password'"
+                formControlName="senha"
+                placeholder="Senha de acesso"
+                required
+              />
+              <button
+                type="button"
+                mat-icon-button
+                matSuffix
+                (click)="alternarVisibilidadeSenha()"
+                [attr.aria-label]="'Ocultar senha'"
+                [attr.aria-pressed]="senhaVisivel()"
+              >
+                <mat-icon>{{ senhaVisivel() ? 'visibility' : 'visibility_off' }}</mat-icon>
+              </button>
+              @if (formulario.get('senha')?.hasError('required')) {
+                <mat-error>Senha é obrigatória.</mat-error>
+              }
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="submit" class="login-botao-entrar" [disabled]="carregando()">
+              {{ carregando() ? 'Autenticando...' : 'Entrar' }}
+            </button>
+          </form>
+
+          <div class="login-links">
+            <a href="javascript:void(0)" class="login-link-esqueceu">Esqueci a minha senha</a>
+          </div>
+
+          <div class="login-credenciais-dica">
+            <mat-icon>info</mat-icon>
+            <span>Dica de teste: use <strong>admin</strong> / <strong>admin123</strong></span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

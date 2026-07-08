@@ -1,2 +1,5 @@
-<app-barra-navegacao />
+@if (authService.isAuthenticated()) {
+  <app-barra-navegacao />
+}
 <router-outlet />
+
