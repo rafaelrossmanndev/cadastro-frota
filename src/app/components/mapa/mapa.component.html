@@ -1,0 +1,174 @@
+<div class="mapa-tela">
+  <!-- Cabeçalho Principal -->
+  <div class="mapa-cabecalho">
+    <h1>Rastreamento da Frota</h1>
+    <span class="mapa-subtitulo">Gerencie e monitore as unidades da frota em tempo real</span>
+  </div>
+
+  <!-- Layout Principal (Painel + Mapa) -->
+  <div class="mapa-dashboard">
+    <!-- Painel de Controle Lateral -->
+    <div class="mapa-painel-controles">
+      <mat-card class="mapa-card">
+        <mat-card-header>
+          <mat-card-title>Unidade Monitorada</mat-card-title>
+          <mat-card-subtitle>Selecione um veículo para começar</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="mapa-card-conteudo">
+          <!-- Seletor de Veículo -->
+          <mat-form-field appearance="outline" class="largura-total">
+            <mat-label>Veículo</mat-label>
+            <mat-select [value]="veiculoSelecionadoId()" (selectionChange)="veiculoSelecionadoId.set($event.value); aoMudarVeiculo()">
+              @for (veiculo of veiculoService.listarTodos(); track veiculo.id) {
+                <mat-option [value]="veiculo.id">
+                  {{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.placa }})
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Painel de Simulação -->
+      <mat-card class="mapa-card">
+        <mat-card-header>
+          <mat-card-title>Simulador de Trajeto</mat-card-title>
+          <mat-card-subtitle>Simula o movimento do veículo em Porto Alegre</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="mapa-card-conteudo">
+          <div class="alinhamento-botoes">
+            <button
+              mat-flat-button
+              class="botao-terciario"
+              [disabled]="!veiculoSelecionadoId() || isSimulando() || isGpsAtivo()"
+              (click)="iniciarSimulacao()"
+            >
+              <mat-icon>play_arrow</mat-icon>
+              Simular rota
+            </button>
+            <button
+              mat-stroked-button
+              color="warn"
+              [disabled]="!isSimulando()"
+              (click)="pararSimulacao()"
+            >
+              <mat-icon>stop</mat-icon>
+              Parar simulação
+            </button>
+          </div>
+          @if (isSimulando()) {
+            <div class="mapa-status-badge status-simulando">
+              <span class="ponto-status-ativo"></span> Simulação em execução...
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Entrada de Coordenadas Manuais -->
+      <mat-card class="mapa-card">
+        <mat-card-header>
+          <mat-card-title>Inserir Coordenada Manual</mat-card-title>
+          <mat-card-subtitle>Posicione a unidade diretamente nas coordenadas abaixo</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="mapa-card-conteudo">
+          <form (ngSubmit)="adicionarPontoManual()" #formManual="ngForm">
+            <div class="form-coordenadas-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Latitude</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  step="0.000001"
+                  placeholder="-30.0346"
+                  required
+                  [ngModel]="latManual()"
+                  (ngModelChange)="latManual.set($event)"
+                  name="lat"
+                />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Longitude</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  step="0.000001"
+                  placeholder="-51.2177"
+                  required
+                  [ngModel]="lngManual()"
+                  (ngModelChange)="lngManual.set($event)"
+                  name="lng"
+                />
+              </mat-form-field>
+            </div>
+
+            <button
+              mat-flat-button
+              color="primary"
+              class="largura-total"
+              type="submit"
+              [disabled]="!veiculoSelecionadoId() || !formManual.valid"
+            >
+              <mat-icon>add_location</mat-icon>
+              Adicionar
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- GPS em Tempo Real -->
+      <mat-card class="mapa-card">
+        <mat-card-header>
+          <mat-card-title>Rastrear Dispositivo</mat-card-title>
+          <mat-card-subtitle>Alimente a posição do veículo com o sinal de GPS do seu celular</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="mapa-card-conteudo">
+          <div class="alinhamento-botoes">
+            <button
+              mat-flat-button
+              color="primary"
+              [disabled]="!veiculoSelecionadoId() || isSimulando() || isGpsAtivo()"
+              (click)="iniciarGps()"
+            >
+              <mat-icon>my_location</mat-icon>
+              Rastrear meu celular
+            </button>
+            <button
+              mat-stroked-button
+              color="warn"
+              [disabled]="!isGpsAtivo()"
+              (click)="pararGps()"
+            >
+              <mat-icon>location_off</mat-icon>
+              Parar GPS
+            </button>
+          </div>
+          @if (isGpsAtivo()) {
+            <div class="mapa-status-badge status-gps">
+              <span class="ponto-status-gps"></span> GPS Ativo - Seguindo dispositivo...
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Limpar Rota -->
+      <div class="mapa-acoes-gerais">
+        <button
+          mat-button
+          color="warn"
+          class="largura-total"
+          [disabled]="!veiculoSelecionadoId()"
+          (click)="limparRota()"
+        >
+          <mat-icon>delete_sweep</mat-icon>
+          Limpar rota
+        </button>
+      </div>
+    </div>
+
+    <!-- Div do Container do Leaflet -->
+    <div class="mapa-container-externo">
+      <div #mapContainer class="mapa-leaflet-canvas"></div>
+    </div>
+  </div>
+</div>
