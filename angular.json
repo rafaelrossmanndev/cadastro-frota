@@ -20,6 +20,10 @@
             "outputPath": "dist/cadastro-frota",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": [
+              "leaflet",
+              "@geoman-io/leaflet-geoman-free"
+            ],
             "polyfills": [
               "zone.js"
             ],

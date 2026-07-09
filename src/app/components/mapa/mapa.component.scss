@@ -143,8 +143,127 @@
   50% { transform: scale(1.3); opacity: 0.6; }
 }
 
+.status-alerta {
+  background-color: rgba(229, 72, 77, 0.12);
+  color: #c0292d;
+  border-color: rgba(229, 72, 77, 0.3);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background-color: rgba(229, 72, 77, 0.2);
+    color: #ff8a8d;
+  }
+}
+
 .mapa-acoes-gerais {
   margin-top: 8px;
+}
+
+/* Listas (cercas e eventos) */
+.texto-vazio {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.lista-cercas,
+.lista-eventos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.item-cerca {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 4px 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+}
+
+.item-cerca-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #e5484d;
+  }
+}
+
+.item-evento {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  background-color: var(--mat-sys-surface-container-high);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.evento-entrada {
+    border-left-color: #26a269;
+    mat-icon { color: #26a269; }
+  }
+
+  &.evento-saida {
+    border-left-color: #e5484d;
+    mat-icon { color: #e5484d; }
+  }
+}
+
+.item-evento-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+
+  strong { font-size: 0.85rem; font-weight: 500; }
+  small { font-size: 0.72rem; color: var(--mat-sys-on-surface-variant); }
+}
+
+/* Replay */
+.replay-controles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.replay-info {
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: center;
+}
+
+.replay-velocidades {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+
+  button.velocidade-ativa {
+    background-color: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+    font-weight: 600;
+  }
 }
 
 /* Área do Mapa */
