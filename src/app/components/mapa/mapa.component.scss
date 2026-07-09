@@ -29,13 +29,14 @@
   display: grid;
   grid-template-columns: 360px 1fr;
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .mapa-painel-controles {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow-y: auto;
 }
 
 .mapa-card {
@@ -55,6 +56,82 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* Painel: seções de busca / lista padrão */
+.mapa-painel-secao {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mapa-painel-titulo {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-background);
+}
+
+.mapa-lista-grupo + .mapa-lista-grupo {
+  margin-top: 8px;
+}
+
+.mapa-lista-grupo-titulo {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-sys-on-surface-variant);
+  padding: 4px 4px;
+}
+
+.mapa-item-lista {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background-color: var(--mat-sys-surface-container-low);
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: var(--mat-sys-on-surface);
+  transition: background-color 0.15s ease;
+
+  & + & {
+    margin-top: 6px;
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--mat-sys-primary);
+    flex: none;
+  }
+
+  &:hover {
+    background-color: var(--mat-sys-surface-container-high);
+  }
+}
+
+.mapa-detalhe-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.88rem;
+
+  .card-label {
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .card-valor {
+    font-weight: 500;
+    color: var(--mat-sys-on-surface);
+  }
 }
 
 /* Helpers utilitários */
@@ -138,110 +215,10 @@
   }
 }
 
-.mapa-acoes-gerais {
-  margin-top: 8px;
-}
-
-/* Listas (cercas e eventos) */
 .texto-vazio {
   margin: 0;
   font-size: 0.85rem;
   color: var(--mat-sys-on-surface-variant);
-}
-
-.lista-cercas,
-.lista-eventos {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.item-cerca {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 4px 4px 8px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 8px;
-}
-
-.item-cerca-info {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: var(--app-cor-perigo);
-  }
-}
-
-.item-evento {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  border-left: 3px solid transparent;
-  background-color: var(--mat-sys-surface-container-high);
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
-
-  &.evento-entrada {
-    border-left-color: var(--app-cor-sucesso);
-    mat-icon { color: var(--app-cor-sucesso); }
-  }
-
-  &.evento-saida {
-    border-left-color: var(--app-cor-perigo);
-    mat-icon { color: var(--app-cor-perigo); }
-  }
-}
-
-.item-evento-texto {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-
-  strong { font-size: 0.85rem; font-weight: 500; }
-  small { font-size: 0.72rem; color: var(--mat-sys-on-surface-variant); }
-}
-
-/* Replay */
-.replay-controles {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.replay-info {
-  font-size: 0.82rem;
-  color: var(--mat-sys-on-surface-variant);
-  text-align: center;
-}
-
-.replay-velocidades {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-
-  button.velocidade-ativa {
-    background-color: var(--mat-sys-primary-container);
-    color: var(--mat-sys-on-primary-container);
-    font-weight: 600;
-  }
 }
 
 /* Área do Mapa */
@@ -259,7 +236,105 @@
   z-index: 1;
 }
 
-/* Estilo do Marcador Pulsante Personalizado */
+/* Faixa inferior: replay + ferramentas de teste */
+.mapa-faixa-inferior {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mapa-replay-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px !important;
+}
+
+.mapa-replay-slider {
+  flex: 1 1 200px;
+  min-width: 160px;
+}
+
+.replay-info {
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface-variant);
+  white-space: nowrap;
+}
+
+.replay-velocidades {
+  display: flex;
+  gap: 6px;
+
+  button.velocidade-ativa {
+    background-color: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+    font-weight: 600;
+  }
+}
+
+.mapa-ferramentas-teste {
+  border-radius: 12px !important;
+  border: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: none !important;
+  background-color: var(--mat-sys-surface-container-low);
+
+  mat-panel-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--mat-sys-on-surface-variant);
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  mat-panel-description {
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.mapa-ferramentas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding-top: 8px;
+}
+
+.mapa-ferramenta-bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+/* Marcador estático (posição de cadastro do veículo) */
+::ng-deep .marcador-estatico-container {
+  position: relative;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+::ng-deep .marcador-estatico-ponto {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--mat-sys-on-surface-variant);
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+/* Estilo do Marcador Pulsante Personalizado (veículo selecionado com trilha ativa) */
 ::ng-deep .marcador-pulsante-container {
   position: relative;
   width: 24px !important;
@@ -307,9 +382,18 @@
   .mapa-dashboard {
     grid-template-columns: 1fr;
   }
-  
+
+  .mapa-painel-controles {
+    overflow-y: visible;
+  }
+
   .mapa-leaflet-canvas {
     height: 500px;
+  }
+
+  .mapa-ferramentas-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 

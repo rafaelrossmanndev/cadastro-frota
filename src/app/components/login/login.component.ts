@@ -64,7 +64,7 @@ export class LoginComponent {
             duration: 3000,
             panelClass: ['snack-sucesso'],
           });
-          this.router.navigate(['/motoristas']);
+          this.router.navigate(['/mapa']);
         } else {
           this.snackBar.open('Usuário ou senha incorretos.', 'Fechar', {
             duration: 4000,

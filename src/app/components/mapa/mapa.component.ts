@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, inject, signal, computed, effect } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 
 // Angular Material
 import { MatCardModule } from '@angular/material/card';
@@ -9,18 +8,21 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import * as L from 'leaflet';
-import '@geoman-io/leaflet-geoman-free';
 
 import { VeiculoService } from '../../services/veiculo.service';
+import { MotoristaService } from '../../services/motorista.service';
 import { RastreamentoService, Coordenada } from '../../services/rastreamento.service';
 import { RoteamentoService } from '../../services/roteamento.service';
-import { CercaVirtualService } from '../../services/cerca-virtual.service';
-import { CercaVirtual, PontoGeo } from '../../models/cerca-virtual.model';
+import { SelecaoService } from '../../services/selecao.service';
+import { BuscaGlobalService } from '../../services/busca-global.service';
+import { PONTOS_REFERENCIA_POA } from '../../utils/geo.util';
+
+const PONTOS_VAZIOS: Coordenada[] = [];
 
 @Component({
   selector: 'app-mapa',
@@ -33,39 +35,33 @@ import { CercaVirtual, PontoGeo } from '../../models/cerca-virtual.model';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     MatTooltipModule,
     MatSliderModule,
+    MatExpansionModule,
   ],
   templateUrl: './mapa.component.html',
   styleUrl: './mapa.component.scss',
 })
-export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
+export class MapaComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef;
 
   protected readonly veiculoService = inject(VeiculoService);
+  protected readonly motoristaService = inject(MotoristaService);
   protected readonly rastreamentoService = inject(RastreamentoService);
-  protected readonly cercaService = inject(CercaVirtualService);
+  protected readonly selecaoService = inject(SelecaoService);
+  protected readonly buscaService = inject(BuscaGlobalService);
   private readonly roteamentoService = inject(RoteamentoService);
-  private readonly router = inject(Router);
 
   /** Cor da marca Movva para o traçado do trajeto (azul primário). */
   private readonly corTrajeto = '#2e6ef5';
 
-  /** Cor padrão das cercas virtuais (vermelho de perigo). */
-  private readonly corCerca = '#e5484d';
-
   // Sinais de controle
-  readonly veiculoSelecionadoId = signal<string>('');
   readonly isSimulando = signal(false);
   readonly isGpsAtivo = signal(false);
   readonly isCarregandoRota = signal(false);
   readonly usouFallback = signal(false);
   readonly latManual = signal<number | null>(null);
   readonly lngManual = signal<number | null>(null);
-
-  // Cercas virtuais (geofencing)
-  readonly modoDesenho = signal(false);
 
   // Replay de histórico
   readonly modoReplay = signal(false);
@@ -74,18 +70,45 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly isReplayTocando = signal(false);
   readonly velocidades = [1, 2, 4, 8];
 
-  // Pontos do veículo atualmente selecionado
-  readonly pontosDoVeiculo = computed<Coordenada[]>(() => {
-    const id = this.veiculoSelecionadoId();
-    return id ? this.rastreamentoService.pontosPorVeiculo()[id] || [] : [];
+  protected readonly veiculosComMotorista = this.veiculoService.veiculosComMotorista;
+
+  /** Veículo selecionado (para o painel de detalhe da sidebar). */
+  protected readonly veiculoSelecionado = computed(() => {
+    const id = this.selecaoService.veiculoSelecionadoId();
+    return id ? this.veiculosComMotorista().find((v) => v.id === id) : undefined;
   });
-  readonly totalPontos = computed(() => this.pontosDoVeiculo().length);
+
+  /** Motorista selecionado sem veículo associado (fallback do painel de detalhe). */
+  protected readonly motoristaSemVeiculoSelecionado = computed(() => {
+    const id = this.selecaoService.motoristaSemVeiculoId();
+    return id ? this.motoristaService.buscarPorId(id) : undefined;
+  });
+
+  // Pontos do veículo atualmente selecionado
+  readonly pontosDoVeiculoSelecionado = computed<Coordenada[]>(() => {
+    const id = this.selecaoService.veiculoSelecionadoId();
+    return id ? (this.rastreamentoService.pontosPorVeiculo()[id] ?? PONTOS_VAZIOS) : PONTOS_VAZIOS;
+  });
+  readonly totalPontos = computed(() => this.pontosDoVeiculoSelecionado().length);
+  readonly temTrilhaSelecionado = computed(() => this.totalPontos() > 0);
+
+  readonly pontosVisiveis = computed<Coordenada[]>(() => {
+    const todos = this.pontosDoVeiculoSelecionado();
+    return this.modoReplay() ? todos.slice(0, this.replayIndex() + 1) : todos;
+  });
 
   // Referências do Leaflet
   private map!: L.Map;
   private marker?: L.Marker;
   private polyline?: L.Polyline;
-  private readonly cercaLayers = new Map<string, L.Layer>();
+  private readonly marcadoresEstaticos = new Map<string, L.Marker>();
+
+  private readonly iconeVeiculoEstatico = L.divIcon({
+    className: 'marcador-estatico-container',
+    html: `<div class="marcador-estatico-ponto"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
 
   // Variáveis da simulação
   private simularIntervalId?: any;
@@ -99,47 +122,49 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
   private replayTimeoutId?: any;
 
   constructor() {
-    // Redesenha o trajeto quando o veículo muda, novas coordenadas chegam ou o replay avança
+    // Sincroniza os marcadores estáticos com a frota, a seleção e a trilha ativa
     effect(() => {
-      const veiculoId = this.veiculoSelecionadoId();
+      this.veiculosComMotorista();
+      this.selecaoService.veiculoSelecionadoId();
+      this.temTrilhaSelecionado();
+      this.sincronizarMarcadoresEstaticos();
+    });
+
+    // Redesenha a trilha (polyline + marcador vivo) do veículo selecionado
+    effect(() => {
+      const veiculoId = this.selecaoService.veiculoSelecionadoId();
       if (!veiculoId) {
         this.limparCamadasMapa();
         return;
       }
 
-      const todos = this.pontosDoVeiculo();
-      const visiveis = this.modoReplay() ? todos.slice(0, this.replayIndex() + 1) : todos;
-      this.desenharRota(visiveis);
+      this.desenharRota(this.pontosVisiveis());
     });
 
-    // Redesenha as cercas virtuais sempre que a coleção muda
+    // Ao trocar a seleção, encerra qualquer captura em andamento
     effect(() => {
-      const cercas = this.cercaService.cercas();
-      this.renderizarCercas(cercas);
+      this.selecaoService.veiculoSelecionadoId();
+      this.selecaoService.motoristaSemVeiculoId();
+      this.pararSimulacao();
+      this.pararGps();
+      this.sairModoReplay();
     });
-  }
-
-  ngOnInit(): void {
-    // Selecionar o primeiro veículo da lista por padrão, se disponível
-    const veiculos = this.veiculoService.listarTodos();
-    if (veiculos.length > 0) {
-      this.veiculoSelecionadoId.set(veiculos[0].id);
-    }
   }
 
   ngAfterViewInit(): void {
     this.inicializarMapa();
-    this.configurarGeoman();
+    this.buscaService.definirResultadosInline(true);
 
     // Render inicial: os effects podem ter rodado antes do mapa existir.
-    this.renderizarCercas(this.cercaService.cercas());
-    this.desenharRota(this.pontosDoVeiculo());
+    this.sincronizarMarcadoresEstaticos();
+    this.desenharRota(this.pontosVisiveis());
   }
 
   ngOnDestroy(): void {
     this.pararSimulacao();
     this.pararGps();
     this.pausarReplay();
+    this.buscaService.definirResultadosInline(false);
 
     if (this.map) {
       this.map.remove();
@@ -147,7 +172,8 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Inicializa o mapa do Leaflet centralizado em Porto Alegre
+   * Inicializa o mapa do Leaflet centralizado em Porto Alegre. O mapa nunca
+   * recentraliza sozinho depois disso — fica estático para mostrar toda a frota.
    */
   private inicializarMapa(): void {
     const portoAlegre: L.LatLngExpression = [-30.0346, -51.2177];
@@ -161,42 +187,80 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * Configura o plugin Leaflet-Geoman (usado apenas para desenhar cercas).
+   * Mantém um marcador estático por veículo cadastrado (posição de cadastro).
+   * O veículo selecionado com trilha ativa é representado pelo marcador "vivo"
+   * de `desenharRota` em vez do estático, para não duplicar o pino.
    */
-  private configurarGeoman(): void {
-    this.map.on('pm:create', (evento: any) => this.aoCriarCerca(evento));
+  private sincronizarMarcadoresEstaticos(): void {
+    if (!this.map) return;
+
+    const veiculos = this.veiculosComMotorista();
+    const idsAtuais = new Set(veiculos.map((v) => v.id));
+    const selecionadoId = this.selecaoService.veiculoSelecionadoId();
+    const temTrilha = this.temTrilhaSelecionado();
+
+    for (const [id, marcador] of this.marcadoresEstaticos) {
+      if (!idsAtuais.has(id)) {
+        marcador.remove();
+        this.marcadoresEstaticos.delete(id);
+      }
+    }
+
+    for (const veiculo of veiculos) {
+      const ehSelecionadoComTrilha = veiculo.id === selecionadoId && temTrilha;
+
+      if (ehSelecionadoComTrilha) {
+        const existente = this.marcadoresEstaticos.get(veiculo.id);
+        if (existente) {
+          existente.remove();
+          this.marcadoresEstaticos.delete(veiculo.id);
+        }
+        continue;
+      }
+
+      const posicao: L.LatLngExpression = [veiculo.lat, veiculo.lng];
+      const conteudoTooltip = `<strong>${veiculo.marca} ${veiculo.modelo}</strong><br>${veiculo.placa} · ${veiculo.nomeMotorista}`;
+      const existente = this.marcadoresEstaticos.get(veiculo.id);
+
+      if (existente) {
+        existente.setLatLng(posicao);
+        existente.setTooltipContent(conteudoTooltip);
+      } else {
+        const marcador = L.marker(posicao, { icon: this.iconeVeiculoEstatico })
+          .addTo(this.map)
+          .bindTooltip(conteudoTooltip, { direction: 'top', offset: [0, -8] })
+          .on('click', () => this.selecaoService.selecionarVeiculo(veiculo.id));
+        this.marcadoresEstaticos.set(veiculo.id, marcador);
+      }
+    }
   }
 
   /**
-   * Executa a renderização reativa do trajeto e marcador
+   * Executa a renderização reativa da trilha (polyline + marcador pulsante)
+   * do veículo selecionado. O mapa nunca recentraliza a partir daqui.
    */
   private desenharRota(pontos: Coordenada[]): void {
     if (!this.map) return;
 
-    // Limpar polyline anterior se houver
     if (this.polyline) {
       this.polyline.remove();
       this.polyline = undefined;
     }
 
-    // Desenha a polyline do trajeto se tivermos 2 ou mais pontos
     if (pontos.length >= 2) {
       const latlngs = pontos.map((p) => [p.lat, p.lng] as L.LatLngExpression);
       this.polyline = L.polyline(latlngs, {
         color: this.corTrajeto,
         weight: 4,
         opacity: 0.9,
-        pmIgnore: true,
       }).addTo(this.map);
     }
 
-    // Desenha ou atualiza o marcador na última posição conhecida
     if (pontos.length > 0) {
       const ultimoPonto = pontos[pontos.length - 1];
       const novaPosicao: L.LatLngExpression = [ultimoPonto.lat, ultimoPonto.lng];
 
       if (!this.marker) {
-        // Ícone personalizado usando divIcon para evitar bugs de bundler e ter visual pulsante premium
         const iconeCustomizado = L.divIcon({
           className: 'marcador-pulsante-container',
           html: `
@@ -207,55 +271,13 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
           iconAnchor: [12, 12],
         });
 
-        this.marker = L.marker(novaPosicao, { icon: iconeCustomizado, pmIgnore: true }).addTo(this.map);
+        this.marker = L.marker(novaPosicao, { icon: iconeCustomizado }).addTo(this.map);
       } else {
         this.marker.setLatLng(novaPosicao);
       }
-
-      // Centralizar o mapa sempre no novo ponto
-      this.map.setView(novaPosicao, this.map.getZoom());
-    } else {
-      // Remove o marcador se não existirem pontos
-      if (this.marker) {
-        this.marker.remove();
-        this.marker = undefined;
-      }
-    }
-  }
-
-  /**
-   * Renderiza as cercas virtuais (círculos e polígonos) armazenadas no serviço.
-   */
-  private renderizarCercas(cercas: CercaVirtual[]): void {
-    if (!this.map) return;
-
-    // Recria as camadas (as cercas são poucas; redesenhar é simples e seguro)
-    for (const layer of this.cercaLayers.values()) layer.remove();
-    this.cercaLayers.clear();
-
-    for (const cerca of cercas) {
-      const cor = cerca.cor || this.corCerca;
-      const estilo = {
-        color: cor,
-        weight: 2,
-        fillColor: cor,
-        fillOpacity: 0.12,
-        pmIgnore: true,
-      } as L.PathOptions;
-
-      let layer: L.Layer | undefined;
-      if (cerca.tipo === 'circulo' && cerca.centro && cerca.raio != null) {
-        layer = L.circle([cerca.centro.lat, cerca.centro.lng], { radius: cerca.raio, ...estilo });
-      } else if (cerca.tipo === 'poligono' && cerca.vertices?.length) {
-        const anel = cerca.vertices.map((v) => [v.lat, v.lng] as L.LatLngExpression);
-        layer = L.polygon(anel, estilo);
-      }
-
-      if (layer) {
-        layer.addTo(this.map);
-        layer.bindTooltip(cerca.nome, { direction: 'top' });
-        this.cercaLayers.set(cerca.id, layer);
-      }
+    } else if (this.marker) {
+      this.marker.remove();
+      this.marker = undefined;
     }
   }
 
@@ -273,15 +295,6 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  /**
-   * Controla a mudança do veículo selecionado
-   */
-  aoMudarVeiculo(): void {
-    this.pararSimulacao();
-    this.pararGps();
-    this.sairModoReplay();
-  }
-
   // ------------------------------------------------------------ Simulação
 
   /**
@@ -289,33 +302,24 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
    * caindo para interpolação linear caso o roteamento falhe.
    */
   async iniciarSimulacao(): Promise<void> {
-    const veiculoId = this.veiculoSelecionadoId();
+    const veiculoId = this.selecaoService.veiculoSelecionadoId();
     if (!veiculoId) return;
 
     this.pararSimulacao();
     this.pararGps();
     this.sairModoReplay();
 
-    // Nós de referência da rota em Porto Alegre
-    const waypoints: PontoGeo[] = [
-      { lat: -30.0346, lng: -51.2177 }, // Centro Histórico
-      { lat: -30.0385, lng: -51.2215 }, // Gasômetro / Orla do Guaíba
-      { lat: -30.0450, lng: -51.2285 }, // Parque Marinha do Brasil
-      { lat: -30.0555, lng: -51.2295 }, // Estádio Beira-Rio
-      { lat: -30.0650, lng: -51.2355 }, // Barra Shopping Sul
-    ];
-
     // Obtém a geometria da rota nas ruas; em falha usa o fallback linear.
     this.isCarregandoRota.set(true);
     this.usouFallback.set(false);
     try {
-      this.rotaSimuladaPoints = await this.roteamentoService.obterRotaRodoviaria(waypoints);
+      this.rotaSimuladaPoints = await this.roteamentoService.obterRotaRodoviaria(PONTOS_REFERENCIA_POA);
     } catch (erro) {
       console.warn('Falha no roteamento OSRM; usando interpolação linear.', erro);
       this.usouFallback.set(true);
       this.rotaSimuladaPoints = this.interpolarRota(
-        waypoints.map((w) => [w.lat, w.lng] as [number, number]),
-        12
+        PONTOS_REFERENCIA_POA.map((w) => [w.lat, w.lng] as [number, number]),
+        12,
       );
     } finally {
       this.isCarregandoRota.set(false);
@@ -360,7 +364,7 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
    * Inicia o rastreamento via GPS do dispositivo
    */
   iniciarGps(): void {
-    const veiculoId = this.veiculoSelecionadoId();
+    const veiculoId = this.selecaoService.veiculoSelecionadoId();
     if (!veiculoId) return;
 
     this.pararSimulacao();
@@ -388,7 +392,7 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
         enableHighAccuracy: true,
         maximumAge: 0,
         timeout: 8000,
-      }
+      },
     );
   }
 
@@ -407,7 +411,7 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
    * Adiciona uma coordenada manualmente informada
    */
   adicionarPontoManual(): void {
-    const veiculoId = this.veiculoSelecionadoId();
+    const veiculoId = this.selecaoService.veiculoSelecionadoId();
     const lat = this.latManual();
     const lng = this.lngManual();
 
@@ -425,66 +429,10 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
    * Limpa a rota tracejada do veículo selecionado, mantendo a última posição ativa
    */
   limparRota(): void {
-    const veiculoId = this.veiculoSelecionadoId();
+    const veiculoId = this.selecaoService.veiculoSelecionadoId();
     if (veiculoId) {
       this.sairModoReplay();
       this.rastreamentoService.limparRota(veiculoId);
-    }
-  }
-
-  // ------------------------------------------------- Cercas virtuais
-
-  desenharCirculo(): void {
-    if (!this.map) return;
-    this.map.pm.enableDraw('Circle', { snappable: true });
-    this.modoDesenho.set(true);
-  }
-
-  desenharPoligono(): void {
-    if (!this.map) return;
-    this.map.pm.enableDraw('Polygon', { snappable: true });
-    this.modoDesenho.set(true);
-  }
-
-  cancelarDesenho(): void {
-    if (this.map) this.map.pm.disableDraw();
-    this.modoDesenho.set(false);
-  }
-
-  removerCerca(id: string): void {
-    this.cercaService.remover(id);
-  }
-
-  limparEventos(): void {
-    this.cercaService.limparEventos();
-  }
-
-  /**
-   * Converte a camada desenhada pelo Geoman em uma CercaVirtual persistida.
-   * A camada temporária é descartada; a cerca definitiva é redesenhada pelo effect.
-   */
-  private aoCriarCerca(evento: any): void {
-    const layer = evento.layer;
-    const shape = evento.shape;
-    this.map.removeLayer(layer);
-    this.modoDesenho.set(false);
-
-    const nome = `Cerca ${this.cercaService.listarTodos().length + 1}`;
-
-    if (shape === 'Circle') {
-      const centro = layer.getLatLng();
-      const raio = layer.getRadius();
-      this.cercaService.adicionar({
-        nome,
-        tipo: 'circulo',
-        centro: { lat: centro.lat, lng: centro.lng },
-        raio,
-        cor: this.corCerca,
-      });
-    } else if (shape === 'Polygon') {
-      const anel = layer.getLatLngs()[0] as L.LatLng[];
-      const vertices = anel.map((p) => ({ lat: p.lat, lng: p.lng }));
-      this.cercaService.adicionar({ nome, tipo: 'poligono', vertices, cor: this.corCerca });
     }
   }
 
@@ -504,7 +452,7 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   tocarReplay(): void {
-    const pontos = this.pontosDoVeiculo();
+    const pontos = this.pontosDoVeiculoSelecionado();
     if (pontos.length < 2) return;
     if (this.replayIndex() >= pontos.length - 1) this.replayIndex.set(0);
     this.isReplayTocando.set(true);
@@ -533,7 +481,7 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
    * timestamps dos pontos, dividido pelo multiplicador de velocidade.
    */
   private agendarProximoReplay(): void {
-    const pontos = this.pontosDoVeiculo();
+    const pontos = this.pontosDoVeiculoSelecionado();
     const i = this.replayIndex();
 
     if (i >= pontos.length - 1) {

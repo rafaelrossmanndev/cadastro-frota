@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { timeout } from 'rxjs/operators';
-import { PontoGeo } from '../models/cerca-virtual.model';
+import { PontoGeo } from '../models/geo.model';
 
 /** Resposta parcial da API de rotas do OSRM que nos interessa. */
 interface RespostaOsrm {
