@@ -1,14 +1,7 @@
 .barra-navegacao-logo {
-  height: 32px;
-  width: 32px;
-  border-radius: 6px;
-  object-fit: cover;
+  height: 28px;
+  width: auto;
   display: block;
-}
-
-.barra-navegacao-titulo {
-  margin-left: 8px;
-  font-weight: 500;
 }
 
 .barra-navegacao-espacador {
@@ -72,10 +65,6 @@ a[mat-button] {
 
 // Responsividade Mobile
 @media (max-width: 768px) {
-  .barra-navegacao-titulo {
-    display: none;
-  }
-
   .barra-navegacao-link-texto {
     display: inline-block;
     font-size: 0.72rem;

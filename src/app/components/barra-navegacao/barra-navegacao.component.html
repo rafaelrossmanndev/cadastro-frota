@@ -1,14 +1,5 @@
 <mat-toolbar color="primary">
-  @if (brandingService.marca().logoUrl) {
-    <img
-      [src]="brandingService.marca().logoUrl!"
-      [alt]="brandingService.marca().nome"
-      class="barra-navegacao-logo"
-    />
-  } @else {
-    <mat-icon>{{ brandingService.marca().iconeFallback ?? 'directions_car' }}</mat-icon>
-  }
-  <span class="barra-navegacao-titulo">{{ brandingService.marca().nome }}</span>
+  <img src="/movva-lockup.svg" alt="Movva" class="barra-navegacao-logo" />
 
   <span class="barra-navegacao-espacador"></span>
 
@@ -56,10 +47,6 @@
       <div class="barra-navegacao-menu-nome">{{ authService.usuarioLogado()?.nome }}</div>
       <div class="barra-navegacao-menu-cargo">{{ authService.usuarioLogado()?.cargo }}</div>
     </div>
-    <a mat-menu-item routerLink="/personalizacao">
-      <mat-icon>palette</mat-icon>
-      <span>Personalização</span>
-    </a>
     <button mat-menu-item (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Sair</span>

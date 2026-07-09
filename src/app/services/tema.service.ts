@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { ModoTema } from '../models/branding.model';
+import { ModoTema } from '../models/tema.model';
 
 const CHAVE_TEMA = 'cadastro-frota-tema';
 

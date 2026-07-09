@@ -6,9 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../services/auth.service';
-import { BrandingService } from '../../services/branding.service';
 import { TemaService } from '../../services/tema.service';
-import { ModoTema } from '../../models/branding.model';
+import { ModoTema } from '../../models/tema.model';
 
 @Component({
   selector: 'app-barra-navegacao',
@@ -26,7 +25,6 @@ import { ModoTema } from '../../models/branding.model';
 })
 export class BarraNavegacaoComponent {
   protected readonly authService = inject(AuthService);
-  protected readonly brandingService = inject(BrandingService);
   protected readonly temaService = inject(TemaService);
 
   /** Ícone do botão de tema conforme o modo atual. */

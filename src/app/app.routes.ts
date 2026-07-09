@@ -59,14 +59,6 @@ export const routes: Routes = [
       import('./components/mapa/mapa.component').then((m) => m.MapaComponent),
     canActivate: [authGuard],
   },
-  {
-    path: 'personalizacao',
-    loadComponent: () =>
-      import('./components/personalizacao/personalizacao.component').then(
-        (m) => m.PersonalizacaoComponent,
-      ),
-    canActivate: [authGuard],
-  },
   { path: '**', redirectTo: 'motoristas' },
 ];
 

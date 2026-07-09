@@ -9,7 +9,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { BrandingService } from '../../services/branding.service';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +30,6 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
-  protected readonly brandingService = inject(BrandingService);
 
   readonly formulario: FormGroup = this.fb.group({
     usuario: ['', [Validators.required]],

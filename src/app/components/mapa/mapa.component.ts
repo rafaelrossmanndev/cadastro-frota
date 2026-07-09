@@ -20,7 +20,6 @@ import { VeiculoService } from '../../services/veiculo.service';
 import { RastreamentoService, Coordenada } from '../../services/rastreamento.service';
 import { RoteamentoService } from '../../services/roteamento.service';
 import { CercaVirtualService } from '../../services/cerca-virtual.service';
-import { BrandingService } from '../../services/branding.service';
 import { CercaVirtual, PontoGeo } from '../../models/cerca-virtual.model';
 
 @Component({
@@ -48,18 +47,13 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
   protected readonly rastreamentoService = inject(RastreamentoService);
   protected readonly cercaService = inject(CercaVirtualService);
   private readonly roteamentoService = inject(RoteamentoService);
-  private readonly brandingService = inject(BrandingService);
   private readonly router = inject(Router);
 
-  /** Cor da marca para o traçado do trajeto. */
-  private get corTrajeto(): string {
-    return this.brandingService.marca().cores.primaria;
-  }
+  /** Cor da marca Movva para o traçado do trajeto (azul primário). */
+  private readonly corTrajeto = '#2e6ef5';
 
-  /** Cor padrão das cercas virtuais (deriva do "perigo" da marca). */
-  private get corCerca(): string {
-    return this.brandingService.marca().cores.perigo;
-  }
+  /** Cor padrão das cercas virtuais (vermelho de perigo). */
+  private readonly corCerca = '#e5484d';
 
   // Sinais de controle
   readonly veiculoSelecionadoId = signal<string>('');

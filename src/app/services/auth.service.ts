@@ -31,9 +31,9 @@ export class AuthService {
         if (isOk) {
           const usuarioMock: UsuarioAutenticado = {
             id: 'mock-user-id',
-            nome: 'Administrador White Label',
+            nome: 'Administrador',
             usuario: 'admin',
-            email: 'admin@suaempresa.com.br',
+            email: 'admin@movva.com.br',
             cargo: 'Gerente de Operações',
           };
           this.#usuarioLogado.set(usuarioMock);
