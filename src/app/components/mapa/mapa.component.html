@@ -40,11 +40,11 @@
             <button
               mat-flat-button
               class="botao-terciario"
-              [disabled]="!veiculoSelecionadoId() || isSimulando() || isGpsAtivo()"
+              [disabled]="!veiculoSelecionadoId() || isSimulando() || isGpsAtivo() || isCarregandoRota()"
               (click)="iniciarSimulacao()"
             >
               <mat-icon>play_arrow</mat-icon>
-              Simular rota
+              {{ isCarregandoRota() ? 'Traçando rota...' : 'Simular rota' }}
             </button>
             <button
               mat-stroked-button
@@ -59,6 +59,11 @@
           @if (isSimulando()) {
             <div class="mapa-status-badge status-simulando">
               <span class="ponto-status-ativo"></span> Simulação em execução...
+            </div>
+          }
+          @if (usouFallback()) {
+            <div class="mapa-status-badge status-alerta">
+              <mat-icon>warning</mat-icon> Roteamento indisponível — usando linha reta.
             </div>
           }
         </mat-card-content>
@@ -146,6 +151,147 @@
           @if (isGpsAtivo()) {
             <div class="mapa-status-badge status-gps">
               <span class="ponto-status-gps"></span> GPS Ativo - Seguindo dispositivo...
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Cercas Virtuais (Geofencing) -->
+      <mat-card class="mapa-card">
+        <mat-card-header>
+          <mat-card-title>Cercas Virtuais</mat-card-title>
+          <mat-card-subtitle>Desenhe áreas para monitorar entradas e saídas</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="mapa-card-conteudo">
+          @if (!modoDesenho()) {
+            <div class="alinhamento-botoes">
+              <button mat-stroked-button (click)="desenharCirculo()">
+                <mat-icon>circle</mat-icon>
+                Círculo
+              </button>
+              <button mat-stroked-button (click)="desenharPoligono()">
+                <mat-icon>pentagon</mat-icon>
+                Polígono
+              </button>
+            </div>
+          } @else {
+            <div class="mapa-status-badge status-simulando">
+              <span class="ponto-status-ativo"></span> Desenhe a cerca no mapa...
+            </div>
+            <button mat-button color="warn" class="largura-total" (click)="cancelarDesenho()">
+              <mat-icon>close</mat-icon>
+              Cancelar desenho
+            </button>
+          }
+
+          @if (cercaService.cercas().length > 0) {
+            <ul class="lista-cercas">
+              @for (cerca of cercaService.cercas(); track cerca.id) {
+                <li class="item-cerca">
+                  <span class="item-cerca-info">
+                    <mat-icon>{{ cerca.tipo === 'circulo' ? 'circle' : 'pentagon' }}</mat-icon>
+                    {{ cerca.nome }}
+                  </span>
+                  <button mat-icon-button color="warn" (click)="removerCerca(cerca.id)" matTooltip="Remover cerca">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="texto-vazio">Nenhuma cerca cadastrada.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Eventos de Cerca -->
+      <mat-card class="mapa-card">
+        <mat-card-header>
+          <mat-card-title>Eventos de Cerca</mat-card-title>
+          <mat-card-subtitle>Entradas e saídas detectadas no trajeto</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="mapa-card-conteudo">
+          @if (cercaService.eventos().length > 0) {
+            <ul class="lista-eventos">
+              @for (evento of cercaService.eventos(); track evento.id) {
+                <li
+                  class="item-evento"
+                  [class.evento-entrada]="evento.tipo === 'entrada'"
+                  [class.evento-saida]="evento.tipo === 'saida'"
+                >
+                  <mat-icon>{{ evento.tipo === 'entrada' ? 'login' : 'logout' }}</mat-icon>
+                  <span class="item-evento-texto">
+                    <strong>{{ evento.tipo === 'entrada' ? 'Entrou em' : 'Saiu de' }} {{ evento.cercaNome }}</strong>
+                    <small>{{ evento.timestamp | date: 'HH:mm:ss' }}</small>
+                  </span>
+                </li>
+              }
+            </ul>
+            <button mat-button class="largura-total" (click)="limparEventos()">
+              <mat-icon>clear_all</mat-icon>
+              Limpar eventos
+            </button>
+          } @else {
+            <p class="texto-vazio">Nenhum evento registrado ainda.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Replay de Histórico -->
+      <mat-card class="mapa-card">
+        <mat-card-header>
+          <mat-card-title>Replay de Histórico</mat-card-title>
+          <mat-card-subtitle>Reproduza o trajeto gravado do veículo</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="mapa-card-conteudo">
+          @if (!modoReplay()) {
+            <button
+              mat-flat-button
+              color="primary"
+              class="largura-total"
+              [disabled]="totalPontos() < 2"
+              (click)="entrarModoReplay()"
+            >
+              <mat-icon>history</mat-icon>
+              Abrir replay ({{ totalPontos() }} pontos)
+            </button>
+          } @else {
+            <div class="replay-controles">
+              <div class="alinhamento-botoes">
+                @if (!isReplayTocando()) {
+                  <button mat-flat-button class="botao-terciario" (click)="tocarReplay()">
+                    <mat-icon>play_arrow</mat-icon>
+                    Reproduzir
+                  </button>
+                } @else {
+                  <button mat-flat-button class="botao-terciario" (click)="pausarReplay()">
+                    <mat-icon>pause</mat-icon>
+                    Pausar
+                  </button>
+                }
+                <button mat-stroked-button (click)="sairModoReplay()">
+                  <mat-icon>close</mat-icon>
+                  Sair
+                </button>
+              </div>
+
+              <mat-slider class="largura-total" min="0" [max]="totalPontos() - 1" step="1" discrete>
+                <input matSliderThumb [ngModel]="replayIndex()" (ngModelChange)="aoMudarReplayIndex($event)" />
+              </mat-slider>
+
+              <div class="replay-info">Ponto {{ replayIndex() + 1 }} de {{ totalPontos() }}</div>
+
+              <div class="replay-velocidades">
+                @for (v of velocidades; track v) {
+                  <button
+                    mat-stroked-button
+                    [class.velocidade-ativa]="replayVelocidade() === v"
+                    (click)="definirVelocidade(v)"
+                  >
+                    {{ v }}x
+                  </button>
+                }
+              </div>
             </div>
           }
         </mat-card-content>
