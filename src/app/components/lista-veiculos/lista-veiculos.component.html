@@ -1,21 +1,15 @@
 <div class="lista-veiculos">
   <div class="lista-veiculos-cabecalho">
-    <h1>Veículos</h1>
+    <h1>Frota</h1>
     <a mat-flat-button class="botao-terciario" routerLink="/veiculos/novo">
       <mat-icon>add</mat-icon>
       Novo veículo
     </a>
   </div>
 
-  <mat-form-field appearance="outline" class="lista-veiculos-busca">
-    <mat-label>Buscar por veículo, motorista ou placa</mat-label>
-    <input matInput [value]="termoBusca()" (input)="aoDigitarBusca($event)" />
-    <mat-icon matIconSuffix>search</mat-icon>
-  </mat-form-field>
-
   <!-- Visualização Desktop (Tabela) -->
   <div class="lista-veiculos-desktop-container">
-    <table mat-table [dataSource]="linhasFiltradas()" class="lista-veiculos-tabela">
+    <table mat-table [dataSource]="veiculoService.veiculosComMotorista()" class="lista-veiculos-tabela">
       <ng-container matColumnDef="placa">
         <th mat-header-cell *matHeaderCellDef>Placa</th>
         <td mat-cell *matCellDef="let veiculo">{{ veiculo.placa }}</td>
@@ -60,7 +54,7 @@
 
   <!-- Visualização Mobile (Lista de Cards) -->
   <div class="lista-veiculos-mobile-container">
-    @for (veiculo of linhasFiltradas(); track veiculo.id) {
+    @for (veiculo of veiculoService.veiculosComMotorista(); track veiculo.id) {
       <div class="card-veiculo-mobile">
         <div class="card-veiculo-header">
           <span class="card-veiculo-marca-modelo">{{ veiculo.marca }} {{ veiculo.modelo }}</span>
@@ -96,8 +90,8 @@
     }
   </div>
 
-  @if (linhasFiltradas().length === 0) {
-    <p class="lista-veiculos-vazio">Nenhum veículo encontrado.</p>
+  @if (veiculoService.veiculosComMotorista().length === 0) {
+    <p class="lista-veiculos-vazio">Nenhum veículo cadastrado.</p>
   }
 </div>
 

@@ -2,7 +2,6 @@
 @use './styles/theme-colors' as theme;
 
 @import 'leaflet/dist/leaflet.css';
-@import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
 *,
 *::before,
@@ -25,10 +24,9 @@ html {
 
   & {
     /* ---------------------------------------------------------------
-       Base da marca (white label). O BrandingService sobrescreve estas
-       três variáveis em runtime; o fallback aqui é a marca azul padrão.
-       Todos os demais tons são DERIVADOS via color-mix(), então uma marca
-       só precisa informar 3 cores.
+       Cores-base da marca Movva. Todos os demais tons (hover, container,
+       gradiente, variante escura) são DERIVADOS destas três via
+       color-mix() nos tokens abaixo.
        --------------------------------------------------------------- */
     --brand-primary-base: #2e6ef5;
     --brand-sucesso-base: #26a269;

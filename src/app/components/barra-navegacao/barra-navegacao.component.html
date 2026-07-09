@@ -1,29 +1,77 @@
 <mat-toolbar color="primary">
-  @if (brandingService.marca().logoUrl) {
-    <img
-      [src]="brandingService.marca().logoUrl!"
-      [alt]="brandingService.marca().nome"
-      class="barra-navegacao-logo"
-    />
-  } @else {
-    <mat-icon>{{ brandingService.marca().iconeFallback ?? 'directions_car' }}</mat-icon>
-  }
-  <span class="barra-navegacao-titulo">{{ brandingService.marca().nome }}</span>
+  <img src="/movva-lockup.svg" alt="Movva" class="barra-navegacao-logo" />
 
   <span class="barra-navegacao-espacador"></span>
 
-  <a mat-button routerLink="/motoristas" routerLinkActive="barra-navegacao-link-ativo">
-    <mat-icon>badge</mat-icon>
-    <span class="barra-navegacao-link-texto">Motoristas</span>
-  </a>
-  <a mat-button routerLink="/veiculos" routerLinkActive="barra-navegacao-link-ativo">
-    <mat-icon>directions_car</mat-icon>
-    <span class="barra-navegacao-link-texto">Veículos</span>
-  </a>
-  <a mat-button routerLink="/mapa" routerLinkActive="barra-navegacao-link-ativo">
-    <mat-icon>map</mat-icon>
-    <span class="barra-navegacao-link-texto">Mapa</span>
-  </a>
+  <nav class="barra-navegacao-nav">
+    <a mat-button routerLink="/mapa" routerLinkActive="barra-navegacao-link-ativo">
+      <mat-icon>home</mat-icon>
+      <span class="barra-navegacao-link-texto">Home</span>
+    </a>
+    <a mat-button routerLink="/motoristas" routerLinkActive="barra-navegacao-link-ativo">
+      <mat-icon>badge</mat-icon>
+      <span class="barra-navegacao-link-texto">Motoristas</span>
+    </a>
+    <a mat-button routerLink="/veiculos" routerLinkActive="barra-navegacao-link-ativo">
+      <mat-icon>directions_car</mat-icon>
+      <span class="barra-navegacao-link-texto">Frota</span>
+    </a>
+  </nav>
+
+  <span class="barra-navegacao-espacador"></span>
+
+  <div class="barra-navegacao-busca">
+    @if (!buscaAberta()) {
+      <button mat-icon-button matTooltip="Buscar" (click)="abrirBusca()">
+        <mat-icon>search</mat-icon>
+      </button>
+    } @else {
+      <div class="barra-navegacao-busca-campo">
+        <mat-icon>search</mat-icon>
+        <input
+          #campoBusca
+          type="text"
+          placeholder="Buscar motorista ou veículo..."
+          [value]="buscaService.termo()"
+          (input)="aoDigitarBusca($event)"
+        />
+        <button mat-icon-button (click)="fecharBusca()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      @if (buscaService.termo() && !buscaService.resultadosInline()) {
+        <div class="barra-navegacao-busca-resultados">
+          @if (temResultados()) {
+            @if (buscaService.resultadosMotoristas().length > 0) {
+              <div class="busca-resultados-grupo">
+                <span class="busca-resultados-titulo">Motoristas</span>
+                @for (motorista of buscaService.resultadosMotoristas(); track motorista.id) {
+                  <button class="busca-resultado-item" (click)="selecionarResultado('motorista', motorista.id)">
+                    <mat-icon>badge</mat-icon>
+                    <span>{{ motorista.nome }}</span>
+                  </button>
+                }
+              </div>
+            }
+            @if (buscaService.resultadosVeiculos().length > 0) {
+              <div class="busca-resultados-grupo">
+                <span class="busca-resultados-titulo">Veículos</span>
+                @for (veiculo of buscaService.resultadosVeiculos(); track veiculo.id) {
+                  <button class="busca-resultado-item" (click)="selecionarResultado('veiculo', veiculo.id)">
+                    <mat-icon>directions_car</mat-icon>
+                    <span>{{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.placa }})</span>
+                  </button>
+                }
+              </div>
+            }
+          } @else {
+            <p class="busca-resultados-vazio">Nenhum resultado encontrado.</p>
+          }
+        </div>
+      }
+    }
+  </div>
 
   <button
     mat-icon-button
@@ -56,10 +104,6 @@
       <div class="barra-navegacao-menu-nome">{{ authService.usuarioLogado()?.nome }}</div>
       <div class="barra-navegacao-menu-cargo">{{ authService.usuarioLogado()?.cargo }}</div>
     </div>
-    <a mat-menu-item routerLink="/personalizacao">
-      <mat-icon>palette</mat-icon>
-      <span>Personalização</span>
-    </a>
     <button mat-menu-item (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Sair</span>

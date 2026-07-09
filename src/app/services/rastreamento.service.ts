@@ -1,5 +1,4 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
-import { CercaVirtualService } from './cerca-virtual.service';
+import { Injectable, effect, signal } from '@angular/core';
 
 export interface Coordenada {
   lat: number;
@@ -14,8 +13,6 @@ const MAX_PONTOS_POR_VEICULO = 500;
   providedIn: 'root',
 })
 export class RastreamentoService {
-  private readonly cercaService = inject(CercaVirtualService);
-
   // Estado privado usando signal
   readonly #pontosPorVeiculo = signal<Record<string, Coordenada[]>>(this.carregarHistorico());
 
@@ -37,7 +34,6 @@ export class RastreamentoService {
   /**
    * Único ponto de entrada para registrar novas coordenadas de rastreamento.
    * Aceita chamadas de qualquer origem: simulação, manual ou GPS do dispositivo.
-   * Também avalia as cercas virtuais para disparar eventos de entrada/saída.
    */
   pushPoint(veiculoId: string, lat: number, lng: number): void {
     if (!veiculoId || isNaN(lat) || isNaN(lng)) return;
@@ -52,9 +48,6 @@ export class RastreamentoService {
           : atualizados;
       return { ...prev, [veiculoId]: limitados };
     });
-
-    // Detecção de cercas virtuais (geofencing).
-    this.cercaService.avaliarPonto(veiculoId, lat, lng);
   }
 
   /**

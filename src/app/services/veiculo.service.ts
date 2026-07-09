@@ -1,12 +1,20 @@
-import { Injectable, signal } from '@angular/core';
-import { DadosVeiculo, Veiculo } from '../models/veiculo.model';
+import { Injectable, computed, signal } from '@angular/core';
+import { DadosVeiculo, Veiculo, VeiculoComMotorista } from '../models/veiculo.model';
 import { MotoristaService } from './motorista.service';
+import { gerarCoordenadaAleatoriaPortoAlegre } from '../utils/geo.util';
 
 @Injectable({ providedIn: 'root' })
 export class VeiculoService {
   readonly #veiculos = signal<Veiculo[]>([]);
 
   readonly veiculos = this.#veiculos.asReadonly();
+
+  readonly veiculosComMotorista = computed<VeiculoComMotorista[]>(() =>
+    this.#veiculos().map((veiculo) => ({
+      ...veiculo,
+      nomeMotorista: this.motoristaService.buscarPorId(veiculo.motoristaId)?.nome ?? 'Motorista não encontrado',
+    })),
+  );
 
   constructor(private readonly motoristaService: MotoristaService) {
     const [primeiroMotorista, segundoMotorista] = this.motoristaService.listarTodos();
@@ -20,6 +28,7 @@ export class VeiculoService {
         anoFabricacao: 2022,
         cor: 'Branco',
         motoristaId: primeiroMotorista.id,
+        ...gerarCoordenadaAleatoriaPortoAlegre(),
       },
       {
         id: crypto.randomUUID(),
@@ -29,6 +38,7 @@ export class VeiculoService {
         anoFabricacao: 2021,
         cor: 'Prata',
         motoristaId: segundoMotorista.id,
+        ...gerarCoordenadaAleatoriaPortoAlegre(),
       },
     ]);
   }
@@ -42,14 +52,14 @@ export class VeiculoService {
   }
 
   adicionar(dados: DadosVeiculo): Veiculo {
-    const veiculo: Veiculo = { ...dados, id: crypto.randomUUID() };
+    const veiculo: Veiculo = { ...dados, id: crypto.randomUUID(), ...gerarCoordenadaAleatoriaPortoAlegre() };
     this.#veiculos.update((veiculos) => [...veiculos, veiculo]);
     return veiculo;
   }
 
   atualizar(id: string, alteracoes: DadosVeiculo): void {
     this.#veiculos.update((veiculos) =>
-      veiculos.map((veiculo) => (veiculo.id === id ? { ...alteracoes, id } : veiculo)),
+      veiculos.map((veiculo) => (veiculo.id === id ? { ...veiculo, ...alteracoes, id } : veiculo)),
     );
   }
 

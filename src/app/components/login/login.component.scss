@@ -40,28 +40,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 220px;
-  height: 220px;
+  width: 100%;
+  max-width: 260px;
   margin-bottom: 24px;
-  border-radius: 50%;
-  background: var(--mat-sys-surface-container-high);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 4px solid var(--mat-sys-outline-variant);
-  overflow: hidden;
-  animation: logo-pulsar 3s infinite ease-in-out;
 }
 
 .login-logo-imagem {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.login-logo-icone {
-  font-size: 96px;
-  width: 96px;
-  height: 96px;
-  color: var(--mat-sys-primary);
+  height: auto;
+  object-fit: contain;
 }
 
 .login-marca-texto {
@@ -191,18 +178,6 @@
   }
 }
 
-// ANIMAÇÕES
-@keyframes logo-pulsar {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
-  50% {
-    transform: scale(1.03);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  }
-}
-
 // MEDIA QUERIES PARA MOBILE
 @media (max-width: 768px) {
   .login-wrapper {
@@ -218,8 +193,7 @@
   }
 
   .login-logo-container {
-    width: 160px;
-    height: 160px;
+    max-width: 200px;
     margin-bottom: 16px;
   }
 

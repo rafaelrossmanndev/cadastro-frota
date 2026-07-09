@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'motoristas' },
+  { path: '', pathMatch: 'full', redirectTo: 'mapa' },
   {
     path: 'login',
     loadComponent: () =>
@@ -59,14 +59,6 @@ export const routes: Routes = [
       import('./components/mapa/mapa.component').then((m) => m.MapaComponent),
     canActivate: [authGuard],
   },
-  {
-    path: 'personalizacao',
-    loadComponent: () =>
-      import('./components/personalizacao/personalizacao.component').then(
-        (m) => m.PersonalizacaoComponent,
-      ),
-    canActivate: [authGuard],
-  },
-  { path: '**', redirectTo: 'motoristas' },
+  { path: '**', redirectTo: 'mapa' },
 ];
 

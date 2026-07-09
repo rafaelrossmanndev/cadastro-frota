@@ -7,75 +7,217 @@
 
   <!-- Layout Principal (Painel + Mapa) -->
   <div class="mapa-dashboard">
-    <!-- Painel de Controle Lateral -->
+    <!-- Painel Lateral: busca / seleção / lista padrão -->
     <div class="mapa-painel-controles">
-      <mat-card class="mapa-card">
-        <mat-card-header>
-          <mat-card-title>Unidade Monitorada</mat-card-title>
-          <mat-card-subtitle>Selecione um veículo para começar</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="mapa-card-conteudo">
-          <!-- Seletor de Veículo -->
-          <mat-form-field appearance="outline" class="largura-total">
-            <mat-label>Veículo</mat-label>
-            <mat-select [value]="veiculoSelecionadoId()" (selectionChange)="veiculoSelecionadoId.set($event.value); aoMudarVeiculo()">
-              @for (veiculo of veiculoService.listarTodos(); track veiculo.id) {
-                <mat-option [value]="veiculo.id">
-                  {{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.placa }})
-                </mat-option>
+      @if (buscaService.termo()) {
+        <!-- Resultados de busca -->
+        <div class="mapa-painel-secao">
+          <h2 class="mapa-painel-titulo">Resultados da busca</h2>
+
+          @if (buscaService.resultadosMotoristas().length === 0 && buscaService.resultadosVeiculos().length === 0) {
+            <p class="texto-vazio">Nenhum resultado encontrado.</p>
+          }
+
+          @if (buscaService.resultadosMotoristas().length > 0) {
+            <div class="mapa-lista-grupo">
+              <span class="mapa-lista-grupo-titulo">Motoristas</span>
+              @for (motorista of buscaService.resultadosMotoristas(); track motorista.id) {
+                <button class="mapa-item-lista" (click)="selecaoService.selecionarMotorista(motorista.id)">
+                  <mat-icon>badge</mat-icon>
+                  <span>{{ motorista.nome }}</span>
+                </button>
               }
-            </mat-select>
-          </mat-form-field>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Painel de Simulação -->
-      <mat-card class="mapa-card">
-        <mat-card-header>
-          <mat-card-title>Simulador de Trajeto</mat-card-title>
-          <mat-card-subtitle>Simula o movimento do veículo em Porto Alegre</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="mapa-card-conteudo">
-          <div class="alinhamento-botoes">
-            <button
-              mat-flat-button
-              class="botao-terciario"
-              [disabled]="!veiculoSelecionadoId() || isSimulando() || isGpsAtivo() || isCarregandoRota()"
-              (click)="iniciarSimulacao()"
-            >
-              <mat-icon>play_arrow</mat-icon>
-              {{ isCarregandoRota() ? 'Traçando rota...' : 'Simular rota' }}
-            </button>
-            <button
-              mat-stroked-button
-              color="warn"
-              [disabled]="!isSimulando()"
-              (click)="pararSimulacao()"
-            >
-              <mat-icon>stop</mat-icon>
-              Parar simulação
-            </button>
-          </div>
-          @if (isSimulando()) {
-            <div class="mapa-status-badge status-simulando">
-              <span class="ponto-status-ativo"></span> Simulação em execução...
             </div>
           }
-          @if (usouFallback()) {
-            <div class="mapa-status-badge status-alerta">
-              <mat-icon>warning</mat-icon> Roteamento indisponível — usando linha reta.
+
+          @if (buscaService.resultadosVeiculos().length > 0) {
+            <div class="mapa-lista-grupo">
+              <span class="mapa-lista-grupo-titulo">Veículos</span>
+              @for (veiculo of buscaService.resultadosVeiculos(); track veiculo.id) {
+                <button class="mapa-item-lista" (click)="selecaoService.selecionarVeiculo(veiculo.id)">
+                  <mat-icon>directions_car</mat-icon>
+                  <span>{{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.placa }})</span>
+                </button>
+              }
             </div>
+          }
+        </div>
+      } @else if (veiculoSelecionado() || motoristaSemVeiculoSelecionado()) {
+        <!-- Detalhe do item selecionado -->
+        <mat-card class="mapa-card">
+          <mat-card-header>
+            @if (veiculoSelecionado(); as veiculo) {
+              <mat-card-title>{{ veiculo.marca }} {{ veiculo.modelo }}</mat-card-title>
+            } @else {
+              @if (motoristaSemVeiculoSelecionado(); as motorista) {
+                <mat-card-title>{{ motorista.nome }}</mat-card-title>
+              }
+            }
+            @if (veiculoSelecionado(); as veiculo) {
+              <mat-card-subtitle>{{ veiculo.placa }}</mat-card-subtitle>
+            } @else {
+              @if (motoristaSemVeiculoSelecionado(); as motorista) {
+                <mat-card-subtitle>Sem veículo associado</mat-card-subtitle>
+              }
+            }
+          </mat-card-header>
+          <mat-card-content class="mapa-card-conteudo">
+            <button mat-button class="largura-total" (click)="selecaoService.limpar()">
+              <mat-icon>arrow_back</mat-icon>
+              Voltar
+            </button>
+
+            @if (veiculoSelecionado(); as veiculo) {
+              <div class="mapa-detalhe-linha">
+                <span class="card-label">Ano</span>
+                <span class="card-valor">{{ veiculo.anoFabricacao }}</span>
+              </div>
+              <div class="mapa-detalhe-linha">
+                <span class="card-label">Cor</span>
+                <span class="card-valor">{{ veiculo.cor }}</span>
+              </div>
+              <div class="mapa-detalhe-linha">
+                <span class="card-label">Motorista</span>
+                <span class="card-valor">{{ veiculo.nomeMotorista }}</span>
+              </div>
+
+              <div class="alinhamento-botoes">
+                <button
+                  mat-flat-button
+                  class="botao-terciario"
+                  [disabled]="isSimulando() || isGpsAtivo() || isCarregandoRota()"
+                  (click)="iniciarSimulacao()"
+                >
+                  <mat-icon>play_arrow</mat-icon>
+                  {{ isCarregandoRota() ? 'Traçando rota...' : 'Simular rota' }}
+                </button>
+                <button mat-stroked-button color="warn" [disabled]="!isSimulando()" (click)="pararSimulacao()">
+                  <mat-icon>stop</mat-icon>
+                  Parar simulação
+                </button>
+              </div>
+              @if (isSimulando()) {
+                <div class="mapa-status-badge status-simulando">
+                  <span class="ponto-status-ativo"></span> Simulação em execução...
+                </div>
+              }
+              @if (usouFallback()) {
+                <div class="mapa-status-badge status-alerta">
+                  <mat-icon>warning</mat-icon> Roteamento indisponível — usando linha reta.
+                </div>
+              }
+
+              <button
+                mat-button
+                color="warn"
+                class="largura-total"
+                [disabled]="totalPontos() === 0"
+                (click)="limparRota()"
+              >
+                <mat-icon>delete_sweep</mat-icon>
+                Limpar rota
+              </button>
+            } @else {
+              @if (motoristaSemVeiculoSelecionado(); as motorista) {
+                <div class="mapa-detalhe-linha">
+                  <span class="card-label">CNH</span>
+                  <span class="card-valor">{{ motorista.numeroCnh }} ({{ motorista.categoriaCnh }})</span>
+                </div>
+                <div class="mapa-detalhe-linha">
+                  <span class="card-label">Contato</span>
+                  <span class="card-valor">{{ motorista.telefone || motorista.email || '—' }}</span>
+                </div>
+              }
+            }
+          </mat-card-content>
+        </mat-card>
+      } @else {
+        <!-- Lista padrão: todos os veículos, clicáveis -->
+        <div class="mapa-painel-secao">
+          <h2 class="mapa-painel-titulo">Veículos da frota</h2>
+
+          @if (veiculosComMotorista().length === 0) {
+            <p class="texto-vazio">Nenhum veículo cadastrado.</p>
+          }
+
+          @for (veiculo of veiculosComMotorista(); track veiculo.id) {
+            <button class="mapa-item-lista" (click)="selecaoService.selecionarVeiculo(veiculo.id)">
+              <mat-icon>directions_car</mat-icon>
+              <span>{{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.placa }})</span>
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Div do Container do Leaflet -->
+    <div class="mapa-container-externo">
+      <div #mapContainer class="mapa-leaflet-canvas"></div>
+    </div>
+  </div>
+
+  <!-- Faixa inferior: replay + ferramentas de teste -->
+  <div class="mapa-faixa-inferior">
+    @if (veiculoSelecionado() && totalPontos() >= 2) {
+      <mat-card class="mapa-card">
+        <mat-card-content class="mapa-replay-linha">
+          @if (!modoReplay()) {
+            <button mat-flat-button color="primary" (click)="entrarModoReplay()">
+              <mat-icon>history</mat-icon>
+              Abrir replay ({{ totalPontos() }} pontos)
+            </button>
+          } @else {
+            @if (!isReplayTocando()) {
+              <button mat-flat-button class="botao-terciario" (click)="tocarReplay()">
+                <mat-icon>play_arrow</mat-icon>
+                Reproduzir
+              </button>
+            } @else {
+              <button mat-flat-button class="botao-terciario" (click)="pausarReplay()">
+                <mat-icon>pause</mat-icon>
+                Pausar
+              </button>
+            }
+
+            <mat-slider class="mapa-replay-slider" min="0" [max]="totalPontos() - 1" step="1" discrete>
+              <input matSliderThumb [ngModel]="replayIndex()" (ngModelChange)="aoMudarReplayIndex($event)" />
+            </mat-slider>
+
+            <span class="replay-info">Ponto {{ replayIndex() + 1 }} de {{ totalPontos() }}</span>
+
+            <div class="replay-velocidades">
+              @for (v of velocidades; track v) {
+                <button
+                  mat-stroked-button
+                  [class.velocidade-ativa]="replayVelocidade() === v"
+                  (click)="definirVelocidade(v)"
+                >
+                  {{ v }}x
+                </button>
+              }
+            </div>
+
+            <button mat-stroked-button (click)="sairModoReplay()">
+              <mat-icon>close</mat-icon>
+              Sair
+            </button>
           }
         </mat-card-content>
       </mat-card>
+    }
 
-      <!-- Entrada de Coordenadas Manuais -->
-      <mat-card class="mapa-card">
-        <mat-card-header>
-          <mat-card-title>Inserir Coordenada Manual</mat-card-title>
-          <mat-card-subtitle>Posicione a unidade diretamente nas coordenadas abaixo</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="mapa-card-conteudo">
+    <mat-expansion-panel class="mapa-ferramentas-teste">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>science</mat-icon>
+          Ferramentas de teste
+        </mat-panel-title>
+        <mat-panel-description>Coordenada manual e GPS do dispositivo</mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="mapa-ferramentas-grid">
+        <div class="mapa-ferramenta-bloco">
+          <h3>Inserir coordenada manual</h3>
           <form (ngSubmit)="adicionarPontoManual()" #formManual="ngForm">
             <div class="form-coordenadas-grid">
               <mat-form-field appearance="outline">
@@ -112,209 +254,38 @@
               color="primary"
               class="largura-total"
               type="submit"
-              [disabled]="!veiculoSelecionadoId() || !formManual.valid"
+              [disabled]="!veiculoSelecionado() || !formManual.valid"
             >
               <mat-icon>add_location</mat-icon>
               Adicionar
             </button>
           </form>
-        </mat-card-content>
-      </mat-card>
+        </div>
 
-      <!-- GPS em Tempo Real -->
-      <mat-card class="mapa-card">
-        <mat-card-header>
-          <mat-card-title>Rastrear Dispositivo</mat-card-title>
-          <mat-card-subtitle>Alimente a posição do veículo com o sinal de GPS do seu celular</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="mapa-card-conteudo">
+        <div class="mapa-ferramenta-bloco">
+          <h3>Rastrear dispositivo (GPS)</h3>
           <div class="alinhamento-botoes">
             <button
               mat-flat-button
               color="primary"
-              [disabled]="!veiculoSelecionadoId() || isSimulando() || isGpsAtivo()"
+              [disabled]="!veiculoSelecionado() || isSimulando() || isGpsAtivo()"
               (click)="iniciarGps()"
             >
               <mat-icon>my_location</mat-icon>
               Rastrear meu celular
             </button>
-            <button
-              mat-stroked-button
-              color="warn"
-              [disabled]="!isGpsAtivo()"
-              (click)="pararGps()"
-            >
+            <button mat-stroked-button color="warn" [disabled]="!isGpsAtivo()" (click)="pararGps()">
               <mat-icon>location_off</mat-icon>
               Parar GPS
             </button>
           </div>
           @if (isGpsAtivo()) {
             <div class="mapa-status-badge status-gps">
-              <span class="ponto-status-gps"></span> GPS Ativo - Seguindo dispositivo...
+              <span class="ponto-status-gps"></span> GPS ativo — seguindo dispositivo...
             </div>
           }
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Cercas Virtuais (Geofencing) -->
-      <mat-card class="mapa-card">
-        <mat-card-header>
-          <mat-card-title>Cercas Virtuais</mat-card-title>
-          <mat-card-subtitle>Desenhe áreas para monitorar entradas e saídas</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="mapa-card-conteudo">
-          @if (!modoDesenho()) {
-            <div class="alinhamento-botoes">
-              <button mat-stroked-button (click)="desenharCirculo()">
-                <mat-icon>circle</mat-icon>
-                Círculo
-              </button>
-              <button mat-stroked-button (click)="desenharPoligono()">
-                <mat-icon>pentagon</mat-icon>
-                Polígono
-              </button>
-            </div>
-          } @else {
-            <div class="mapa-status-badge status-simulando">
-              <span class="ponto-status-ativo"></span> Desenhe a cerca no mapa...
-            </div>
-            <button mat-button color="warn" class="largura-total" (click)="cancelarDesenho()">
-              <mat-icon>close</mat-icon>
-              Cancelar desenho
-            </button>
-          }
-
-          @if (cercaService.cercas().length > 0) {
-            <ul class="lista-cercas">
-              @for (cerca of cercaService.cercas(); track cerca.id) {
-                <li class="item-cerca">
-                  <span class="item-cerca-info">
-                    <mat-icon>{{ cerca.tipo === 'circulo' ? 'circle' : 'pentagon' }}</mat-icon>
-                    {{ cerca.nome }}
-                  </span>
-                  <button mat-icon-button color="warn" (click)="removerCerca(cerca.id)" matTooltip="Remover cerca">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </li>
-              }
-            </ul>
-          } @else {
-            <p class="texto-vazio">Nenhuma cerca cadastrada.</p>
-          }
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Eventos de Cerca -->
-      <mat-card class="mapa-card">
-        <mat-card-header>
-          <mat-card-title>Eventos de Cerca</mat-card-title>
-          <mat-card-subtitle>Entradas e saídas detectadas no trajeto</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="mapa-card-conteudo">
-          @if (cercaService.eventos().length > 0) {
-            <ul class="lista-eventos">
-              @for (evento of cercaService.eventos(); track evento.id) {
-                <li
-                  class="item-evento"
-                  [class.evento-entrada]="evento.tipo === 'entrada'"
-                  [class.evento-saida]="evento.tipo === 'saida'"
-                >
-                  <mat-icon>{{ evento.tipo === 'entrada' ? 'login' : 'logout' }}</mat-icon>
-                  <span class="item-evento-texto">
-                    <strong>{{ evento.tipo === 'entrada' ? 'Entrou em' : 'Saiu de' }} {{ evento.cercaNome }}</strong>
-                    <small>{{ evento.timestamp | date: 'HH:mm:ss' }}</small>
-                  </span>
-                </li>
-              }
-            </ul>
-            <button mat-button class="largura-total" (click)="limparEventos()">
-              <mat-icon>clear_all</mat-icon>
-              Limpar eventos
-            </button>
-          } @else {
-            <p class="texto-vazio">Nenhum evento registrado ainda.</p>
-          }
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Replay de Histórico -->
-      <mat-card class="mapa-card">
-        <mat-card-header>
-          <mat-card-title>Replay de Histórico</mat-card-title>
-          <mat-card-subtitle>Reproduza o trajeto gravado do veículo</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="mapa-card-conteudo">
-          @if (!modoReplay()) {
-            <button
-              mat-flat-button
-              color="primary"
-              class="largura-total"
-              [disabled]="totalPontos() < 2"
-              (click)="entrarModoReplay()"
-            >
-              <mat-icon>history</mat-icon>
-              Abrir replay ({{ totalPontos() }} pontos)
-            </button>
-          } @else {
-            <div class="replay-controles">
-              <div class="alinhamento-botoes">
-                @if (!isReplayTocando()) {
-                  <button mat-flat-button class="botao-terciario" (click)="tocarReplay()">
-                    <mat-icon>play_arrow</mat-icon>
-                    Reproduzir
-                  </button>
-                } @else {
-                  <button mat-flat-button class="botao-terciario" (click)="pausarReplay()">
-                    <mat-icon>pause</mat-icon>
-                    Pausar
-                  </button>
-                }
-                <button mat-stroked-button (click)="sairModoReplay()">
-                  <mat-icon>close</mat-icon>
-                  Sair
-                </button>
-              </div>
-
-              <mat-slider class="largura-total" min="0" [max]="totalPontos() - 1" step="1" discrete>
-                <input matSliderThumb [ngModel]="replayIndex()" (ngModelChange)="aoMudarReplayIndex($event)" />
-              </mat-slider>
-
-              <div class="replay-info">Ponto {{ replayIndex() + 1 }} de {{ totalPontos() }}</div>
-
-              <div class="replay-velocidades">
-                @for (v of velocidades; track v) {
-                  <button
-                    mat-stroked-button
-                    [class.velocidade-ativa]="replayVelocidade() === v"
-                    (click)="definirVelocidade(v)"
-                  >
-                    {{ v }}x
-                  </button>
-                }
-              </div>
-            </div>
-          }
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Limpar Rota -->
-      <div class="mapa-acoes-gerais">
-        <button
-          mat-button
-          color="warn"
-          class="largura-total"
-          [disabled]="!veiculoSelecionadoId()"
-          (click)="limparRota()"
-        >
-          <mat-icon>delete_sweep</mat-icon>
-          Limpar rota
-        </button>
+        </div>
       </div>
-    </div>
-
-    <!-- Div do Container do Leaflet -->
-    <div class="mapa-container-externo">
-      <div #mapContainer class="mapa-leaflet-canvas"></div>
-    </div>
+    </mat-expansion-panel>
   </div>
 </div>

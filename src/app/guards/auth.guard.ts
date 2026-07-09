@@ -19,7 +19,7 @@ export const authGuard: CanActivateFn = () => {
 
 /**
  * Guardião para a tela de Login.
- * Redireciona para /motoristas caso o usuário já esteja autenticado.
+ * Redireciona para /mapa caso o usuário já esteja autenticado.
  */
 export const guestGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
@@ -29,5 +29,5 @@ export const guestGuard: CanActivateFn = () => {
     return true;
   }
 
-  return router.createUrlTree(['/motoristas']);
+  return router.createUrlTree(['/mapa']);
 };

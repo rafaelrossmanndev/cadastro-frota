@@ -1,23 +1,13 @@
 <div class="login-container">
   <div class="login-wrapper">
-    <!-- Lado Esquerdo: Marca White Label -->
+    <!-- Lado Esquerdo: Marca Movva -->
     <div class="login-marca-secao">
       <div class="login-logo-container">
-        @if (brandingService.marca().logoUrl) {
-          <img
-            [src]="brandingService.marca().logoUrl!"
-            [alt]="brandingService.marca().nome"
-            class="login-logo-imagem"
-          />
-        } @else {
-          <mat-icon class="login-logo-icone">{{
-            brandingService.marca().iconeFallback ?? 'directions_car'
-          }}</mat-icon>
-        }
+        <img src="/movva-lockup.svg" alt="Movva" class="login-logo-imagem" />
       </div>
       <div class="login-marca-texto">
-        <h2>{{ brandingService.marca().loginTitulo ?? brandingService.marca().nome }}</h2>
-        <p>{{ brandingService.marca().tagline }}</p>
+        <h2>Gestão de Frota</h2>
+        <p>Sua frota sob controle.</p>
       </div>
     </div>
 

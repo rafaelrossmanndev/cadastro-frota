@@ -1,19 +1,23 @@
-# 🚚 Gestão de Frota (White Label)
+# 🚚 Movva · Gestão de Frota
 
-Este projeto é uma aplicação web **White Label** para **Gestão de Frotas** (cadastro de Motoristas e Veículos). Ele foi desenvolvido para rodar 100% no frontend (dados salvos em memória e simulados de forma reativa).
+Aplicação web da **Movva** para **Gestão de Frotas** (cadastro de Motoristas e Veículos). Ela foi desenvolvida para rodar 100% no frontend (dados salvos em memória e simulados de forma reativa).
 
 Acesse a aplicação online hospedada na Vercel: **[https://cadastro-frota.vercel.app/](https://cadastro-frota.vercel.app/)**
 
 ---
 
-## 🎨 Conceito White Label & Identidade
+## 🎨 Identidade Visual
 
-Como uma aplicação White Label (onde a plataforma é licenciada para que outras empresas apliquem sua própria identidade), a tela de login foi projetada para destacar o logotipo personalizável do cliente. 
+A identidade da Movva é aplicada de forma fixa em toda a aplicação. Os assets ficam em `public/`:
+* **`movva-logo.svg`** — ícone da marca, usado como favicon da aba.
+* **`movva-lockup.svg`** — logotipo com wordmark, exibido no header e na tela de login.
 
-O projeto conta com um logotipo fictício de demonstração contendo o selo **"Seu Logo Aqui"**, integrado à paleta de cores padrão do projeto:
-* **Primary (Aubergine/Vinho):** `#2C001E`
-* **Tertiary (Laranja):** `#E95420`
-* **Neutral (Cinza-quente):** `#AEA79F`
+A paleta de cores é derivada de três cores-base definidas em `src/styles.scss` (todos os demais tons — hover, container, gradiente, variante escura — saem delas via `color-mix()`):
+* **Primária (Azul):** `#2e6ef5`
+* **Sucesso (Verde):** `#26a269`
+* **Perigo (Vermelho):** `#e5484d`
+
+Há também um seletor de **tema** (claro / escuro / automático conforme o sistema) no header, com a preferência persistida em `localStorage`.
 
 ---
 
@@ -21,7 +25,7 @@ O projeto conta com um logotipo fictício de demonstração contendo o selo **"S
 
 A aplicação foi completamente adaptada para dispositivos móveis seguindo as melhores práticas de design de interface:
 * **Transformação de Tabelas em Cartões:** Em telas pequenas (< 768px), as tabelas de listagem (`lista-motoristas` e `lista-veiculos`) deixam de ser exibidas no formato clássico de linhas horizontais e são dinamicamente transformadas em **cartões empilhados verticais** com bordas arredondadas e divisores dashed. Isso é feito via CSS puro (`display: block` nas tags de tabela + atributos `data-label` gerando legendas), proporcionando excelente legibilidade.
-* **Barra de Navegação Adaptável:** No celular, o título da barra de navegação é ocultado e os textos dos botões são removidos, mantendo apenas os ícones correspondentes para preservar o espaço horizontal.
+* **Barra de Navegação Adaptável:** No celular, os textos dos botões são removidos, mantendo apenas o logotipo da Movva e os ícones correspondentes para preservar o espaço horizontal.
 * **Formulários Responsivos:** Os formulários de cadastro possuem preenchimento de tela cheia em dispositivos menores, e os botões de ação ("Salvar" e "Cancelar") são empilhados verticalmente em ordem lógica reversa, facilitando o toque com o polegar.
 
 ---
@@ -61,7 +65,7 @@ src/app/
 ├── guards/         # Guardiões de rotas (authGuard, guestGuard)
 └── components/
     ├── barra-navegacao/ # Barra de ferramentas com links e menu de perfil
-    ├── login/           # Tela de autenticação White Label
+    ├── login/           # Tela de autenticação
     ├── lista-motoristas/
     ├── formulario-motorista/
     ├── lista-veiculos/
@@ -79,7 +83,7 @@ src/app/
 ## 🛠️ Tecnologias Utilizadas
 
 * **Angular 19** (Standalone Components, Signals, Novo Control Flow `@if`/`@for`).
-* **Angular Material 3** (Customizado a partir das cores de marca).
+* **Angular Material 3** (Customizado a partir das cores da marca Movva).
 * **RxJS** (para fluxos de carregamento assíncronos e reatividade).
 * **ngx-mask** (máscaras de telefone, CPF e CNH).
 * **Sass (SCSS)** (para folha de estilos estruturada e responsividade por media queries).

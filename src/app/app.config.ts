@@ -6,7 +6,6 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
 
 import { routes } from './app.routes';
-import { BrandingService } from './services/branding.service';
 import { TemaService } from './services/tema.service';
 
 export const appConfig: ApplicationConfig = {
@@ -18,7 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     provideEnvironmentNgxMask(),
     provideAppInitializer(() => {
-      inject(BrandingService).aplicar();
       inject(TemaService).inicializar();
     }),
   ],
