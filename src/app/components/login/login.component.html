@@ -3,11 +3,21 @@
     <!-- Lado Esquerdo: Marca White Label -->
     <div class="login-marca-secao">
       <div class="login-logo-container">
-        <img src="/seu-logo-aqui.png" alt="Seu Logo Aqui" class="login-logo-imagem" />
+        @if (brandingService.marca().logoUrl) {
+          <img
+            [src]="brandingService.marca().logoUrl!"
+            [alt]="brandingService.marca().nome"
+            class="login-logo-imagem"
+          />
+        } @else {
+          <mat-icon class="login-logo-icone">{{
+            brandingService.marca().iconeFallback ?? 'directions_car'
+          }}</mat-icon>
+        }
       </div>
       <div class="login-marca-texto">
-        <h2>Gestão de Frota</h2>
-        <p>Sua marca, sua frota, seu controle.</p>
+        <h2>{{ brandingService.marca().loginTitulo ?? brandingService.marca().nome }}</h2>
+        <p>{{ brandingService.marca().tagline }}</p>
       </div>
     </div>
 

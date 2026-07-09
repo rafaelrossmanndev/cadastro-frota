@@ -1,6 +1,14 @@
 <mat-toolbar color="primary">
-  <mat-icon>directions_car</mat-icon>
-  <span class="barra-navegacao-titulo">Cadastro de Frota</span>
+  @if (brandingService.marca().logoUrl) {
+    <img
+      [src]="brandingService.marca().logoUrl!"
+      [alt]="brandingService.marca().nome"
+      class="barra-navegacao-logo"
+    />
+  } @else {
+    <mat-icon>{{ brandingService.marca().iconeFallback ?? 'directions_car' }}</mat-icon>
+  }
+  <span class="barra-navegacao-titulo">{{ brandingService.marca().nome }}</span>
 
   <span class="barra-navegacao-espacador"></span>
 
@@ -17,6 +25,29 @@
     <span class="barra-navegacao-link-texto">Mapa</span>
   </a>
 
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menuTema"
+    matTooltip="Tema"
+    class="barra-navegacao-tema"
+  >
+    <mat-icon>{{ iconeTema() }}</mat-icon>
+  </button>
+  <mat-menu #menuTema="matMenu" xPosition="before">
+    <button mat-menu-item (click)="definirTema('claro')">
+      <mat-icon>light_mode</mat-icon>
+      <span>Claro</span>
+    </button>
+    <button mat-menu-item (click)="definirTema('escuro')">
+      <mat-icon>dark_mode</mat-icon>
+      <span>Escuro</span>
+    </button>
+    <button mat-menu-item (click)="definirTema('sistema')">
+      <mat-icon>brightness_auto</mat-icon>
+      <span>Sistema</span>
+    </button>
+  </mat-menu>
+
   <button mat-icon-button [matMenuTriggerFor]="menuPerfil" class="barra-navegacao-perfil">
     <mat-icon>account_circle</mat-icon>
   </button>
@@ -25,10 +56,13 @@
       <div class="barra-navegacao-menu-nome">{{ authService.usuarioLogado()?.nome }}</div>
       <div class="barra-navegacao-menu-cargo">{{ authService.usuarioLogado()?.cargo }}</div>
     </div>
+    <a mat-menu-item routerLink="/personalizacao">
+      <mat-icon>palette</mat-icon>
+      <span>Personalização</span>
+    </a>
     <button mat-menu-item (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Sair</span>
     </button>
   </mat-menu>
 </mat-toolbar>
-

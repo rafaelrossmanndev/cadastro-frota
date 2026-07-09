@@ -20,9 +20,8 @@ import { VeiculoService } from '../../services/veiculo.service';
 import { RastreamentoService, Coordenada } from '../../services/rastreamento.service';
 import { RoteamentoService } from '../../services/roteamento.service';
 import { CercaVirtualService } from '../../services/cerca-virtual.service';
+import { BrandingService } from '../../services/branding.service';
 import { CercaVirtual, PontoGeo } from '../../models/cerca-virtual.model';
-
-const COR_CERCA = '#e5484d';
 
 @Component({
   selector: 'app-mapa',
@@ -49,7 +48,18 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
   protected readonly rastreamentoService = inject(RastreamentoService);
   protected readonly cercaService = inject(CercaVirtualService);
   private readonly roteamentoService = inject(RoteamentoService);
+  private readonly brandingService = inject(BrandingService);
   private readonly router = inject(Router);
+
+  /** Cor da marca para o traçado do trajeto. */
+  private get corTrajeto(): string {
+    return this.brandingService.marca().cores.primaria;
+  }
+
+  /** Cor padrão das cercas virtuais (deriva do "perigo" da marca). */
+  private get corCerca(): string {
+    return this.brandingService.marca().cores.perigo;
+  }
 
   // Sinais de controle
   readonly veiculoSelecionadoId = signal<string>('');
@@ -179,7 +189,7 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
     if (pontos.length >= 2) {
       const latlngs = pontos.map((p) => [p.lat, p.lng] as L.LatLngExpression);
       this.polyline = L.polyline(latlngs, {
-        color: '#2e6ef5',
+        color: this.corTrajeto,
         weight: 4,
         opacity: 0.9,
         pmIgnore: true,
@@ -230,10 +240,11 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cercaLayers.clear();
 
     for (const cerca of cercas) {
+      const cor = cerca.cor || this.corCerca;
       const estilo = {
-        color: cerca.cor || COR_CERCA,
+        color: cor,
         weight: 2,
-        fillColor: cerca.cor || COR_CERCA,
+        fillColor: cor,
         fillOpacity: 0.12,
         pmIgnore: true,
       } as L.PathOptions;
@@ -474,12 +485,12 @@ export class MapaComponent implements OnInit, OnDestroy, AfterViewInit {
         tipo: 'circulo',
         centro: { lat: centro.lat, lng: centro.lng },
         raio,
-        cor: COR_CERCA,
+        cor: this.corCerca,
       });
     } else if (shape === 'Polygon') {
       const anel = layer.getLatLngs()[0] as L.LatLng[];
       const vertices = anel.map((p) => ({ lat: p.lat, lng: p.lng }));
-      this.cercaService.adicionar({ nome, tipo: 'poligono', vertices, cor: COR_CERCA });
+      this.cercaService.adicionar({ nome, tipo: 'poligono', vertices, cor: this.corCerca });
     }
   }
 

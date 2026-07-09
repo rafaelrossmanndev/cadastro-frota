@@ -24,50 +24,90 @@ html {
   ));
 
   & {
-    /* Design Claro (Padrão) */
-    --mat-sys-background: #f4f6fb;
-    --mat-sys-on-background: #0d1020;
-    --mat-sys-surface: #ffffff;
-    --mat-sys-on-surface: #0d1020;
-    --mat-sys-surface-container: #ffffff;
-    --mat-sys-surface-container-low: #ffffff;
-    --mat-sys-surface-container-high: #eaecf5;
-    --mat-sys-outline-variant: #d0d5e8;
-    --mat-sys-on-surface-variant: #4a5068;
+    /* ---------------------------------------------------------------
+       Base da marca (white label). O BrandingService sobrescreve estas
+       três variáveis em runtime; o fallback aqui é a marca azul padrão.
+       Todos os demais tons são DERIVADOS via color-mix(), então uma marca
+       só precisa informar 3 cores.
+       --------------------------------------------------------------- */
+    --brand-primary-base: #2e6ef5;
+    --brand-sucesso-base: #26a269;
+    --brand-perigo-base: #e5484d;
 
-    --mat-sys-primary: #2e6ef5;
+    /* Primária responsiva ao tema: no escuro é a primária clareada. */
+    --brand-primary: light-dark(
+      var(--brand-primary-base),
+      color-mix(in srgb, var(--brand-primary-base) 78%, white)
+    );
+
+    /* Semânticos consumidos pelos componentes. */
+    --app-cor-sucesso: light-dark(
+      var(--brand-sucesso-base),
+      color-mix(in srgb, var(--brand-sucesso-base) 70%, white)
+    );
+    --app-cor-perigo: light-dark(
+      var(--brand-perigo-base),
+      color-mix(in srgb, var(--brand-perigo-base) 70%, white)
+    );
+    --app-gradiente-primario: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--brand-primary) 70%, white),
+      var(--brand-primary)
+    );
+
+    /* Neutros (independentes da marca) — agora via light-dark(). */
+    --mat-sys-background: light-dark(#f4f6fb, #0b0b0b);
+    --mat-sys-on-background: light-dark(#0d1020, #ffffff);
+    --mat-sys-surface: light-dark(#ffffff, #141414);
+    --mat-sys-on-surface: light-dark(#0d1020, #ffffff);
+    --mat-sys-surface-container: light-dark(#ffffff, #141414);
+    --mat-sys-surface-container-low: light-dark(#ffffff, #141414);
+    --mat-sys-surface-container-high: light-dark(#eaecf5, #1c1c1c);
+    --mat-sys-outline-variant: light-dark(#d0d5e8, #242424);
+    --mat-sys-on-surface-variant: light-dark(#4a5068, #666666);
+
+    /* Tokens do Material derivados da marca. */
+    --mat-sys-primary: var(--brand-primary);
     --mat-sys-on-primary: #ffffff;
-    --mat-sys-primary-container: #eaecf5;
-    --mat-sys-on-primary-container: #2e6ef5;
-
-    --mat-sys-tertiary: #2e6ef5;
+    --mat-sys-primary-container: color-mix(in srgb, var(--brand-primary) 14%, var(--mat-sys-surface));
+    --mat-sys-on-primary-container: var(--brand-primary);
+    --mat-sys-tertiary: var(--brand-primary);
     --mat-sys-on-tertiary: #ffffff;
-
-    --app-cor-sucesso: #26a269;
   }
+}
 
-  @media (prefers-color-scheme: dark) {
-    & {
-      /* Design Escuro (Opção) */
-      --mat-sys-background: #0b0b0b;
-      --mat-sys-on-background: #ffffff;
-      --mat-sys-surface: #141414;
-      --mat-sys-on-surface: #ffffff;
-      --mat-sys-surface-container: #141414;
-      --mat-sys-surface-container-low: #141414;
-      --mat-sys-surface-container-high: #1c1c1c;
-      --mat-sys-outline-variant: #242424;
-      --mat-sys-on-surface-variant: #666666;
+/* Seletor manual de tema: força o color-scheme, ao qual o light-dark()
+   dos nossos tokens e dos tokens do Material respondem. Sem data-theme,
+   o padrão é seguir o SO (color-scheme: light dark). */
+html[data-theme='light'] {
+  color-scheme: light;
+}
 
-      --mat-sys-primary: #4f8ef7;
-      --mat-sys-on-primary: #ffffff;
-      --mat-sys-primary-container: #0d1b3e;
-      --mat-sys-on-primary-container: #4f8ef7;
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
 
-      --mat-sys-tertiary: #4f8ef7;
-      --mat-sys-on-tertiary: #ffffff;
-    }
+/* Fundos decorativos do login. Não são cor pura (gradientes), então não
+   cabem em light-dark(); ficam aqui para responderem ao seletor de tema:
+   escuro pelo SO (sem forçar claro) OU escuro forçado via data-theme. */
+:root {
+  --login-fundo: var(--mat-sys-background);
+  --login-cartao-fundo: var(--mat-sys-surface-container-low);
+  --login-cartao-sombra: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --login-fundo: radial-gradient(ellipse at 50% 40%, #0d1b3e, #0b0b0b);
+    --login-cartao-fundo: linear-gradient(135deg, #1e1e1e, #141414);
+    --login-cartao-sombra: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
+}
+
+:root[data-theme='dark'] {
+  --login-fundo: radial-gradient(ellipse at 50% 40%, #0d1b3e, #0b0b0b);
+  --login-cartao-fundo: linear-gradient(135deg, #1e1e1e, #141414);
+  --login-cartao-sombra: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 html,
@@ -80,15 +120,11 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-/* Gradientes Oficiais de Botões Primários */
+/* Gradiente Oficial de Botões Primários (derivado da marca) */
 .mat-mdc-flat-button.mat-primary,
 .mat-mdc-raised-button.mat-primary {
-  background: linear-gradient(135deg, #6ba3f9, #2e6ef5) !important;
+  background: var(--app-gradiente-primario) !important;
   color: #ffffff !important;
-  
-  @media (prefers-color-scheme: dark) {
-    background: linear-gradient(135deg, #4f8ef7, #0d1b3e) !important;
-  }
 }
 
 .botao-terciario {

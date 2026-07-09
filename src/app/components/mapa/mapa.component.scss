@@ -40,21 +40,13 @@
 
 .mapa-card {
   border: 1px solid var(--mat-sys-outline-variant);
-  background-color: var(--mat-sys-surface-container-low, #ffffff);
+  background-color: var(--mat-sys-surface-container-low);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  @media (prefers-color-scheme: dark) {
-    background-color: var(--mat-sys-surface);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  }
-
   &:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-    @media (prefers-color-scheme: dark) {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    }
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -111,26 +103,17 @@
 }
 
 .status-gps {
-  background-color: rgba(38, 162, 105, 0.15);
-  color: #26a269;
-  border-color: rgba(38, 162, 105, 0.3);
-  
-  @media (prefers-color-scheme: dark) {
-    background-color: rgba(38, 162, 105, 0.25);
-    color: #4cd995;
-  }
+  background-color: color-mix(in srgb, var(--app-cor-sucesso) 15%, transparent);
+  color: var(--app-cor-sucesso);
+  border-color: color-mix(in srgb, var(--app-cor-sucesso) 30%, transparent);
 }
 
 .ponto-status-gps {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #26a269;
+  background-color: var(--app-cor-sucesso);
   animation: pulse-badge-gps 1.2s infinite ease-in-out;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: #4cd995;
-  }
 }
 
 @keyframes pulse-badge {
@@ -144,19 +127,14 @@
 }
 
 .status-alerta {
-  background-color: rgba(229, 72, 77, 0.12);
-  color: #c0292d;
-  border-color: rgba(229, 72, 77, 0.3);
+  background-color: color-mix(in srgb, var(--app-cor-perigo) 12%, transparent);
+  color: var(--app-cor-perigo);
+  border-color: color-mix(in srgb, var(--app-cor-perigo) 30%, transparent);
 
   mat-icon {
     font-size: 18px;
     width: 18px;
     height: 18px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: rgba(229, 72, 77, 0.2);
-    color: #ff8a8d;
   }
 }
 
@@ -202,7 +180,7 @@
     font-size: 18px;
     width: 18px;
     height: 18px;
-    color: #e5484d;
+    color: var(--app-cor-perigo);
   }
 }
 
@@ -222,13 +200,13 @@
   }
 
   &.evento-entrada {
-    border-left-color: #26a269;
-    mat-icon { color: #26a269; }
+    border-left-color: var(--app-cor-sucesso);
+    mat-icon { color: var(--app-cor-sucesso); }
   }
 
   &.evento-saida {
-    border-left-color: #e5484d;
-    mat-icon { color: #e5484d; }
+    border-left-color: var(--app-cor-perigo);
+    mat-icon { color: var(--app-cor-perigo); }
   }
 }
 
@@ -295,7 +273,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: var(--mat-sys-primary, #2e6ef5);
+  background-color: var(--mat-sys-primary);
   border: 2px solid #ffffff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   z-index: 2;
@@ -307,8 +285,8 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: rgba(46, 110, 245, 0.35);
-  border: 1.5px solid var(--mat-sys-primary, #2e6ef5);
+  background-color: color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
+  border: 1.5px solid var(--mat-sys-primary);
   animation: pulse-anel-gps 1.6s infinite ease-out;
   z-index: 1;
 }
