@@ -5,6 +5,7 @@ import { VeiculoService } from './veiculo.service';
 import { SelecaoService } from './selecao.service';
 import { Motorista } from '../models/motorista.model';
 import { VeiculoComMotorista } from '../models/veiculo.model';
+import { filtrarMotoristas, filtrarVeiculos } from '../utils/busca.util';
 
 /**
  * Busca unificada (motoristas + veículos) usada pelo header. `resultadosInline`
@@ -33,30 +34,15 @@ export class BuscaGlobalService {
   }
 
   readonly resultadosMotoristas = computed<Motorista[]>(() => {
-    const termo = this.#termo().trim().toLowerCase();
+    const termo = this.#termo().trim();
     if (!termo) return [];
-
-    const termoCpf = termo.replace(/\D/g, '');
-
-    return this.motoristaService.motoristas().filter((motorista) => {
-      const nomeCorresponde = motorista.nome.toLowerCase().includes(termo);
-      const cpfCorresponde = termoCpf.length > 0 && motorista.cpf.includes(termoCpf);
-      return nomeCorresponde || cpfCorresponde;
-    });
+    return filtrarMotoristas(this.motoristaService.motoristas(), termo);
   });
 
   readonly resultadosVeiculos = computed<VeiculoComMotorista[]>(() => {
-    const termo = this.#termo().trim().toLowerCase();
+    const termo = this.#termo().trim();
     if (!termo) return [];
-
-    const termoPlaca = termo.toUpperCase().replace(/[^A-Z0-9]/g, '');
-
-    return this.veiculoService.veiculosComMotorista().filter((veiculo) => {
-      const nomeVeiculo = `${veiculo.marca} ${veiculo.modelo}`.toLowerCase();
-      const nomeMotoristaCorresponde = veiculo.nomeMotorista.toLowerCase().includes(termo);
-      const placaCorresponde = termoPlaca.length > 0 && veiculo.placa.includes(termoPlaca);
-      return nomeVeiculo.includes(termo) || nomeMotoristaCorresponde || placaCorresponde;
-    });
+    return filtrarVeiculos(this.veiculoService.veiculosComMotorista(), termo);
   });
 
   selecionarResultado(tipo: 'motorista' | 'veiculo', id: string): void {

@@ -37,17 +37,58 @@
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
+  /* Folga para o anel de foco (box-shadow 3px) da busca não ser clipado pelo
+     overflow do painel — o overflow-y:auto faz o overflow-x computar p/ auto. */
+  padding: 4px;
+}
+
+/* Barra de pesquisa da sidebar: layout do botão de limpar (o campo
+   arredondado em si vem de `.mapa-busca-campo` no styles.scss global). */
+.mapa-busca-campo button {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  flex: none;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .mapa-card {
   border: 1px solid var(--mat-sys-outline-variant);
   background-color: var(--mat-sys-surface-container-low);
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
 
   &:hover {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Cabeçalho do card com faixa de destaque azul */
+  mat-card-header {
+    padding: 16px;
+    background: linear-gradient(
+      135deg,
+      var(--mat-sys-primary-container),
+      color-mix(in srgb, var(--mat-sys-primary-container) 45%, var(--mat-sys-surface))
+    );
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  mat-card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface);
+  }
+
+  mat-card-subtitle {
+    color: var(--mat-sys-primary);
+    font-weight: 500;
   }
 }
 
@@ -56,6 +97,13 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* Botão "Voltar" compacto, alinhado à esquerda no topo do card */
+.mapa-btn-voltar {
+  align-self: flex-start;
+  color: var(--mat-sys-on-surface-variant);
+  margin-left: -8px;
 }
 
 /* Painel: seções de busca / lista padrão */
@@ -89,32 +137,53 @@
 .mapa-item-lista {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid var(--mat-sys-outline-variant);
+  border-left: 3px solid transparent;
   background-color: var(--mat-sys-surface-container-low);
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font: inherit;
+  font-weight: 500;
   text-align: left;
   color: var(--mat-sys-on-surface);
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 
   & + & {
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
+  /* Ícone do carro em um chip azul para mais contraste */
   mat-icon {
     font-size: 20px;
-    width: 20px;
-    height: 20px;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    border-radius: 8px;
     color: var(--mat-sys-primary);
+    background-color: var(--mat-sys-primary-container);
     flex: none;
   }
 
   &:hover {
     background-color: var(--mat-sys-surface-container-high);
+    border-color: color-mix(in srgb, var(--mat-sys-primary) 40%, var(--mat-sys-outline-variant));
+  }
+
+  /* Estado selecionado (sincronizado com o marcador destacado no mapa) */
+  &.selecionado {
+    border-color: var(--mat-sys-primary);
+    border-left-color: var(--mat-sys-primary);
+    background-color: var(--mat-sys-primary-container);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--mat-sys-primary) 22%, transparent);
+
+    mat-icon {
+      color: var(--mat-sys-on-primary);
+      background-color: var(--mat-sys-primary);
+    }
   }
 }
 
@@ -123,13 +192,16 @@
   align-items: center;
   justify-content: space-between;
   font-size: 0.88rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: var(--mat-sys-surface-container-high);
 
   .card-label {
     color: var(--mat-sys-on-surface-variant);
   }
 
   .card-valor {
-    font-weight: 500;
+    font-weight: 600;
     color: var(--mat-sys-on-surface);
   }
 }
@@ -143,6 +215,10 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  button {
+    width: 100%;
+  }
 }
 
 .form-coordenadas-grid {
@@ -317,21 +393,43 @@
   }
 }
 
-/* Marcador estático (posição de cadastro do veículo) */
-::ng-deep .marcador-estatico-container {
-  position: relative;
-  width: 16px !important;
-  height: 16px !important;
+/* Marcador estático (posição de cadastro do veículo): carro azul da marca */
+::ng-deep .marcador-carro-container {
+  background: transparent !important;
+  border: none !important;
 }
 
-::ng-deep .marcador-estatico-ponto {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: var(--mat-sys-on-surface-variant);
+::ng-deep .marcador-carro {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2e6ef5;
   border: 2px solid #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transform: rotate(-45deg);
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  svg {
+    transform: rotate(45deg);
+  }
+}
+
+/* Veículo selecionado: maior, com anel de destaque */
+::ng-deep .marcador-carro-selecionado {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+  box-shadow: 0 4px 12px rgba(46, 110, 245, 0.55), 0 0 0 4px rgba(46, 110, 245, 0.25);
+  z-index: 1000;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 /* Estilo do Marcador Pulsante Personalizado (veículo selecionado com trilha ativa) */

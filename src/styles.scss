@@ -60,9 +60,10 @@ html {
     --mat-sys-on-surface: light-dark(#0d1020, #ffffff);
     --mat-sys-surface-container: light-dark(#ffffff, #141414);
     --mat-sys-surface-container-low: light-dark(#ffffff, #141414);
-    --mat-sys-surface-container-high: light-dark(#eaecf5, #1c1c1c);
-    --mat-sys-outline-variant: light-dark(#d0d5e8, #242424);
-    --mat-sys-on-surface-variant: light-dark(#4a5068, #666666);
+    --mat-sys-surface-container-high: light-dark(#eaecf5, #242424);
+    --mat-sys-outline-variant: light-dark(#d0d5e8, #3a3a3a);
+    /* No escuro, cinza claro para ícones/textos secundários ficarem legíveis. */
+    --mat-sys-on-surface-variant: light-dark(#4a5068, #b4b9c9);
 
     /* Tokens do Material derivados da marca. */
     --mat-sys-primary: var(--brand-primary);
@@ -135,10 +136,187 @@ body {
   background-color: var(--mat-sys-surface-container-high) !important;
   color: var(--mat-sys-on-surface) !important;
   border-bottom: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 10;
 }
 
 tr.mat-mdc-header-row {
   background-color: var(--mat-sys-surface-container-high) !important;
+}
+
+/* ---------------------------------------------------------------
+   Barra de busca reutilizável das telas de lista (motoristas / frota),
+   com dropdown de sugestões (mesmo padrão da antiga busca do header).
+   --------------------------------------------------------------- */
+.lista-busca {
+  position: relative;
+  flex: 1 1 300px;
+  max-width: 360px;
+}
+
+/* O botão "Novo …" não deve encolher nem quebrar o texto ao lado da busca. */
+.lista-acoes .mdc-button {
+  flex: none;
+  white-space: nowrap;
+}
+
+/* Campo de busca arredondado — compartilhado pelas listas e pela sidebar do mapa. */
+.lista-busca-campo,
+.mapa-busca-campo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 999px;
+  padding: 0 6px 0 14px;
+  height: 44px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lista-busca-campo:focus-within,
+.mapa-busca-campo:focus-within {
+  border-color: var(--mat-sys-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary) 18%, transparent);
+}
+
+.lista-busca-campo > .mat-icon,
+.mapa-busca-campo > .mat-icon {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.lista-busca-campo input,
+.mapa-busca-campo input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: var(--mat-sys-on-surface);
+}
+
+.lista-busca-campo input::placeholder,
+.mapa-busca-campo input::placeholder {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.lista-busca-resultados {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  background-color: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  z-index: 30;
+}
+
+.busca-resultados-titulo {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-sys-on-surface-variant);
+  padding: 4px 8px;
+}
+
+.busca-resultado-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: var(--mat-sys-on-surface);
+}
+
+.busca-resultado-item .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--mat-sys-primary);
+  flex: none;
+}
+
+.busca-resultado-item:hover {
+  background-color: var(--mat-sys-surface-container-high);
+}
+
+.busca-resultados-vazio {
+  margin: 0;
+  padding: 12px 8px;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------
+   Chips reutilizáveis (categoria da CNH / placa) — tabela e cards mobile.
+   --------------------------------------------------------------- */
+.badge-categoria,
+.badge-placa {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badge-categoria {
+  background-color: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+.badge-placa {
+  background-color: color-mix(in srgb, var(--mat-sys-primary) 16%, var(--mat-sys-surface));
+  color: var(--mat-sys-primary);
+}
+
+/* ---------------------------------------------------------------
+   Tabelas coloridas (mat-table) das telas de lista: cabeçalho com
+   destaque, zebra striping, hover e separadores via tokens (dark ok).
+   --------------------------------------------------------------- */
+.tabela-colorida .mat-mdc-header-cell {
+  color: var(--mat-sys-on-surface);
+  font-weight: 600;
+}
+
+.tabela-colorida .mat-mdc-row {
+  transition: background-color 0.12s ease;
+}
+
+.tabela-colorida .mat-mdc-row:nth-child(even) {
+  background-color: color-mix(in srgb, var(--mat-sys-primary) 5%, var(--mat-sys-surface));
+}
+
+.tabela-colorida .mat-mdc-row:hover {
+  background-color: var(--mat-sys-surface-container-high);
+}
+
+.tabela-colorida .mat-mdc-cell {
+  color: var(--mat-sys-on-surface);
+  border-bottom-color: var(--mat-sys-outline-variant);
 }
 
 

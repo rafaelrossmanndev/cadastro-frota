@@ -1,18 +1,59 @@
 <div class="lista-veiculos">
   <div class="lista-veiculos-cabecalho">
     <h1>Frota</h1>
-    <a mat-flat-button class="botao-terciario" routerLink="/veiculos/novo">
-      <mat-icon>add</mat-icon>
-      Novo veículo
-    </a>
+
+    <div class="lista-acoes">
+      <!-- Barra de busca (somente veículos) + dropdown de sugestões -->
+      <div class="lista-busca">
+        <div class="lista-busca-campo">
+          <mat-icon>search</mat-icon>
+          <input
+            type="text"
+            placeholder="Buscar veículo..."
+            [value]="termoBusca()"
+            (input)="aoDigitar($event)"
+            (focus)="dropdownAberto.set(true)"
+            (keydown.enter)="aplicarBusca()"
+          />
+          @if (termoBusca()) {
+            <button mat-icon-button matTooltip="Limpar" (click)="limparBusca()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </div>
+
+        @if (dropdownAberto() && termoBusca()) {
+          <div class="lista-busca-resultados">
+            @if (sugestoes().length > 0) {
+              <div class="busca-resultados-grupo">
+                <span class="busca-resultados-titulo">Veículos</span>
+                @for (veiculo of sugestoes(); track veiculo.id) {
+                  <button class="busca-resultado-item" (click)="selecionarSugestao(veiculo)">
+                    <mat-icon>directions_car</mat-icon>
+                    <span>{{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.placa }})</span>
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="busca-resultados-vazio">Nenhum resultado encontrado.</p>
+            }
+          </div>
+        }
+      </div>
+
+      <a mat-flat-button class="botao-terciario" routerLink="/veiculos/novo">
+        <mat-icon>add</mat-icon>
+        Novo veículo
+      </a>
+    </div>
   </div>
 
   <!-- Visualização Desktop (Tabela) -->
   <div class="lista-veiculos-desktop-container">
-    <table mat-table [dataSource]="veiculoService.veiculosComMotorista()" class="lista-veiculos-tabela">
+    <table mat-table [dataSource]="veiculosFiltrados()" class="lista-veiculos-tabela tabela-colorida">
       <ng-container matColumnDef="placa">
         <th mat-header-cell *matHeaderCellDef>Placa</th>
-        <td mat-cell *matCellDef="let veiculo">{{ veiculo.placa }}</td>
+        <td mat-cell *matCellDef="let veiculo"><span class="lista-veiculos-placa">{{ veiculo.placa }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="veiculo">
@@ -54,7 +95,7 @@
 
   <!-- Visualização Mobile (Lista de Cards) -->
   <div class="lista-veiculos-mobile-container">
-    @for (veiculo of veiculoService.veiculosComMotorista(); track veiculo.id) {
+    @for (veiculo of veiculosFiltrados(); track veiculo.id) {
       <div class="card-veiculo-mobile">
         <div class="card-veiculo-header">
           <span class="card-veiculo-marca-modelo">{{ veiculo.marca }} {{ veiculo.modelo }}</span>
@@ -90,8 +131,14 @@
     }
   </div>
 
-  @if (veiculoService.veiculosComMotorista().length === 0) {
-    <p class="lista-veiculos-vazio">Nenhum veículo cadastrado.</p>
+  @if (veiculosFiltrados().length === 0) {
+    <p class="lista-veiculos-vazio">
+      @if (termoAplicado()) {
+        Nenhum veículo encontrado para "{{ termoAplicado() }}".
+      } @else {
+        Nenhum veículo cadastrado.
+      }
+    </p>
   }
 </div>
 

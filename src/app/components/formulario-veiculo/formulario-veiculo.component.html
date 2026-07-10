@@ -48,12 +48,23 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Motorista responsável</mat-label>
-      <mat-select formControlName="motoristaId" required>
-        @for (motorista of motoristas(); track motorista.id) {
-          <mat-option [value]="motorista.id">{{ motorista.nome }}</mat-option>
+      <input
+        matInput
+        placeholder="Digite o nome do motorista"
+        [formControl]="controleBuscaMotorista"
+        [matAutocomplete]="autoMotorista"
+        required
+      />
+      <mat-autocomplete
+        #autoMotorista="matAutocomplete"
+        [displayWith]="exibirMotorista"
+        (optionSelected)="selecionarMotorista($event.option.value)"
+      >
+        @for (motorista of motoristasFiltrados(); track motorista.id) {
+          <mat-option [value]="motorista">{{ motorista.nome }}</mat-option>
         }
-      </mat-select>
-      @if (formulario.controls.motoristaId.hasError('required')) {
+      </mat-autocomplete>
+      @if (formulario.controls.motoristaId.hasError('required') && formulario.controls.motoristaId.touched) {
         <mat-error>Selecione um motorista responsável.</mat-error>
       }
     </mat-form-field>

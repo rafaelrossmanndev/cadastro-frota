@@ -103,11 +103,23 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
   private polyline?: L.Polyline;
   private readonly marcadoresEstaticos = new Map<string, L.Marker>();
 
+  /** Silhueta de carro (branca) usada dentro do pino azul do marcador. */
+  private readonly svgCarro = `<svg viewBox="0 0 24 24" width="16" height="16" fill="#ffffff" xmlns="http://www.w3.org/2000/svg"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>`;
+
+  /** Marcador padrão: pino/círculo azul da marca com o carro branco. */
   private readonly iconeVeiculoEstatico = L.divIcon({
-    className: 'marcador-estatico-container',
-    html: `<div class="marcador-estatico-ponto"></div>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
+    className: 'marcador-carro-container',
+    html: `<div class="marcador-carro">${this.svgCarro}</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+  });
+
+  /** Marcador destacado do veículo selecionado (maior, com anel). */
+  private readonly iconeVeiculoSelecionado = L.divIcon({
+    className: 'marcador-carro-container',
+    html: `<div class="marcador-carro marcador-carro-selecionado">${this.svgCarro}</div>`,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
   });
 
   // Variáveis da simulação
@@ -171,6 +183,16 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  // ------------------------------------------------------------ Busca sidebar
+
+  aoDigitarBusca(evento: Event): void {
+    this.buscaService.definirTermo((evento.target as HTMLInputElement).value);
+  }
+
+  limparBusca(): void {
+    this.buscaService.definirTermo('');
+  }
+
   /**
    * Inicializa o mapa do Leaflet centralizado em Porto Alegre. O mapa nunca
    * recentraliza sozinho depois disso — fica estático para mostrar toda a frota.
@@ -220,15 +242,17 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
 
       const posicao: L.LatLngExpression = [veiculo.lat, veiculo.lng];
       const conteudoTooltip = `<strong>${veiculo.marca} ${veiculo.modelo}</strong><br>${veiculo.placa} · ${veiculo.nomeMotorista}`;
+      const icone = veiculo.id === selecionadoId ? this.iconeVeiculoSelecionado : this.iconeVeiculoEstatico;
       const existente = this.marcadoresEstaticos.get(veiculo.id);
 
       if (existente) {
         existente.setLatLng(posicao);
         existente.setTooltipContent(conteudoTooltip);
+        existente.setIcon(icone);
       } else {
-        const marcador = L.marker(posicao, { icon: this.iconeVeiculoEstatico })
+        const marcador = L.marker(posicao, { icon: icone })
           .addTo(this.map)
-          .bindTooltip(conteudoTooltip, { direction: 'top', offset: [0, -8] })
+          .bindTooltip(conteudoTooltip, { direction: 'top', offset: [0, -12] })
           .on('click', () => this.selecaoService.selecionarVeiculo(veiculo.id));
         this.marcadoresEstaticos.set(veiculo.id, marcador);
       }

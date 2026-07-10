@@ -5,12 +5,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MotoristaService } from '../../services/motorista.service';
 import { CategoriaCnh, DadosMotorista } from '../../models/motorista.model';
 import { normalizarCpf, validadorCpf } from '../../validators/cpf.validator';
 import { validadorValidadeCnh } from '../../validators/validade-cnh.validator';
+import { DataAdaptadorBr, FORMATOS_DATA_BR } from '../../config/data-br';
+import { MascaraDataBrDirective } from '../../directives/mascara-data-br.directive';
 
 interface ControlesFormularioMotorista {
   nome: FormControl<string>;
@@ -33,9 +36,15 @@ interface ControlesFormularioMotorista {
     MatDatepickerModule,
     MatButtonModule,
     NgxMaskDirective,
+    MascaraDataBrDirective,
   ],
   templateUrl: './formulario-motorista.component.html',
   styleUrl: './formulario-motorista.component.scss',
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    { provide: DateAdapter, useClass: DataAdaptadorBr, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: FORMATOS_DATA_BR },
+  ],
 })
 export class FormularioMotoristaComponent {
   private readonly motoristaService = inject(MotoristaService);

@@ -1,15 +1,17 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { VeiculoService } from '../../services/veiculo.service';
 import { MotoristaService } from '../../services/motorista.service';
 import { DadosVeiculo } from '../../models/veiculo.model';
+import { Motorista } from '../../models/motorista.model';
 import { normalizarPlaca, validadorPlaca } from '../../validators/placa.validator';
+import { filtrarMotoristas } from '../../utils/busca.util';
 
 interface ControlesFormularioVeiculo {
   placa: FormControl<string>;
@@ -29,7 +31,7 @@ const anoAtual = new Date().getFullYear();
     RouterLink,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
+    MatAutocompleteModule,
     MatButtonModule,
   ],
   templateUrl: './formulario-veiculo.component.html',
@@ -46,6 +48,20 @@ export class FormularioVeiculoComponent {
 
   readonly motoristas = this.motoristaService.motoristas;
 
+  /** Campo de texto/seleção do autocomplete (guarda a string digitada ou o Motorista escolhido). */
+  readonly controleBuscaMotorista = new FormControl<string | Motorista>('', { nonNullable: true });
+
+  private readonly termoMotorista = toSignal(this.controleBuscaMotorista.valueChanges, {
+    initialValue: '' as string | Motorista,
+  });
+
+  /** Motoristas filtrados por nome enquanto digita (reutiliza a util de busca). */
+  readonly motoristasFiltrados = computed<Motorista[]>(() => {
+    const valor = this.termoMotorista();
+    const termo = typeof valor === 'string' ? valor : (valor?.nome ?? '');
+    return filtrarMotoristas(this.motoristas(), termo);
+  });
+
   readonly formulario = new FormGroup<ControlesFormularioVeiculo>({
     placa: new FormControl('', { nonNullable: true, validators: [Validators.required, validadorPlaca] }),
     marca: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -58,11 +74,22 @@ export class FormularioVeiculoComponent {
     motoristaId: new FormControl<string | null>(null, { validators: [Validators.required] }),
   });
 
+  /** Exibe o nome do motorista selecionado no input do autocomplete. */
+  readonly exibirMotorista = (motorista: Motorista | string | null): string =>
+    motorista && typeof motorista !== 'string' ? motorista.nome : '';
+
   constructor() {
     this.formulario.controls.placa.valueChanges.pipe(takeUntilDestroyed()).subscribe((valor) => {
       const valorMaiusculo = valor.toUpperCase();
       if (valorMaiusculo !== valor) {
         this.formulario.controls.placa.setValue(valorMaiusculo, { emitEvent: false });
+      }
+    });
+
+    // Texto livre (sem opção escolhida) invalida a seleção para o `required` continuar valendo.
+    this.controleBuscaMotorista.valueChanges.pipe(takeUntilDestroyed()).subscribe((valor) => {
+      if (typeof valor === 'string') {
+        this.formulario.controls.motoristaId.setValue(null);
       }
     });
 
@@ -72,8 +99,17 @@ export class FormularioVeiculoComponent {
 
       if (veiculo) {
         this.formulario.patchValue(veiculo);
+        const motorista = this.motoristas().find((m) => m.id === veiculo.motoristaId);
+        if (motorista) {
+          this.controleBuscaMotorista.setValue(motorista, { emitEvent: false });
+        }
       }
     });
+  }
+
+  selecionarMotorista(motorista: Motorista): void {
+    this.formulario.controls.motoristaId.setValue(motorista.id);
+    this.formulario.controls.motoristaId.markAsTouched();
   }
 
   salvar(): void {

@@ -31,7 +31,15 @@
             <!-- Usuário -->
             <mat-form-field appearance="outline" class="login-campo">
               <mat-label>Usuário</mat-label>
-              <input matInput formControlName="usuario" placeholder="Nome de usuário" required />
+              <input
+                matInput
+                formControlName="usuario"
+                placeholder="Nome de usuário"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                required
+              />
               <mat-icon matSuffix>person</mat-icon>
               @if (formulario.get('usuario')?.hasError('required')) {
                 <mat-error>Usuário é obrigatório.</mat-error>

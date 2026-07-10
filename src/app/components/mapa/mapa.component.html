@@ -9,6 +9,22 @@
   <div class="mapa-dashboard">
     <!-- Painel Lateral: busca / seleção / lista padrão -->
     <div class="mapa-painel-controles">
+      <!-- Barra de pesquisa (motoristas + veículos) -->
+      <div class="mapa-busca-campo">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          placeholder="Buscar motorista ou veículo..."
+          [value]="buscaService.termo()"
+          (input)="aoDigitarBusca($event)"
+        />
+        @if (buscaService.termo()) {
+          <button mat-icon-button matTooltip="Limpar" (click)="limparBusca()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+
       @if (buscaService.termo()) {
         <!-- Resultados de busca -->
         <div class="mapa-painel-secao">
@@ -62,7 +78,7 @@
             }
           </mat-card-header>
           <mat-card-content class="mapa-card-conteudo">
-            <button mat-button class="largura-total" (click)="selecaoService.limpar()">
+            <button mat-button class="mapa-btn-voltar" (click)="selecaoService.limpar()">
               <mat-icon>arrow_back</mat-icon>
               Voltar
             </button>
@@ -141,7 +157,11 @@
           }
 
           @for (veiculo of veiculosComMotorista(); track veiculo.id) {
-            <button class="mapa-item-lista" (click)="selecaoService.selecionarVeiculo(veiculo.id)">
+            <button
+              class="mapa-item-lista"
+              [class.selecionado]="veiculo.id === selecaoService.veiculoSelecionadoId()"
+              (click)="selecaoService.selecionarVeiculo(veiculo.id)"
+            >
               <mat-icon>directions_car</mat-icon>
               <span>{{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.placa }})</span>
             </button>

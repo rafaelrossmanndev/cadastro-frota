@@ -1,15 +1,56 @@
 <div class="lista-motoristas">
   <div class="lista-motoristas-cabecalho">
     <h1>Motoristas</h1>
-    <a mat-flat-button class="botao-terciario" routerLink="/motoristas/novo">
-      <mat-icon>add</mat-icon>
-      Novo motorista
-    </a>
+
+    <div class="lista-acoes">
+      <!-- Barra de busca (somente motoristas) + dropdown de sugestões -->
+      <div class="lista-busca">
+        <div class="lista-busca-campo">
+          <mat-icon>search</mat-icon>
+          <input
+            type="text"
+            placeholder="Buscar motorista..."
+            [value]="termoBusca()"
+            (input)="aoDigitar($event)"
+            (focus)="dropdownAberto.set(true)"
+            (keydown.enter)="aplicarBusca()"
+          />
+          @if (termoBusca()) {
+            <button mat-icon-button matTooltip="Limpar" (click)="limparBusca()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </div>
+
+        @if (dropdownAberto() && termoBusca()) {
+          <div class="lista-busca-resultados">
+            @if (sugestoes().length > 0) {
+              <div class="busca-resultados-grupo">
+                <span class="busca-resultados-titulo">Motoristas</span>
+                @for (motorista of sugestoes(); track motorista.id) {
+                  <button class="busca-resultado-item" (click)="selecionarSugestao(motorista)">
+                    <mat-icon>badge</mat-icon>
+                    <span>{{ motorista.nome }}</span>
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="busca-resultados-vazio">Nenhum resultado encontrado.</p>
+            }
+          </div>
+        }
+      </div>
+
+      <a mat-flat-button class="botao-terciario" routerLink="/motoristas/novo">
+        <mat-icon>add</mat-icon>
+        Novo motorista
+      </a>
+    </div>
   </div>
 
   <!-- Visualização Desktop (Tabela) -->
   <div class="lista-motoristas-desktop-container">
-    <table mat-table [dataSource]="motoristaService.motoristas()" class="lista-motoristas-tabela">
+    <table mat-table [dataSource]="motoristasFiltrados()" class="lista-motoristas-tabela tabela-colorida">
       <ng-container matColumnDef="nome">
         <th mat-header-cell *matHeaderCellDef>Nome</th>
         <td mat-cell *matCellDef="let motorista">{{ motorista.nome }}</td>
@@ -66,7 +107,7 @@
 
   <!-- Visualização Mobile (Lista de Cards) -->
   <div class="lista-motoristas-mobile-container">
-    @for (motorista of motoristaService.motoristas(); track motorista.id) {
+    @for (motorista of motoristasFiltrados(); track motorista.id) {
       <div class="card-motorista-mobile">
         <div class="card-motorista-header">
           <span class="card-motorista-nome">{{ motorista.nome }}</span>
@@ -117,8 +158,14 @@
     }
   </div>
 
-  @if (motoristaService.motoristas().length === 0) {
-    <p class="lista-motoristas-vazio">Nenhum motorista cadastrado.</p>
+  @if (motoristasFiltrados().length === 0) {
+    <p class="lista-motoristas-vazio">
+      @if (termoAplicado()) {
+        Nenhum motorista encontrado para "{{ termoAplicado() }}".
+      } @else {
+        Nenhum motorista cadastrado.
+      }
+    </p>
   }
 </div>
 
