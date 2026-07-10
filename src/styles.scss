@@ -14,8 +14,8 @@ html {
 
   @include mat.theme((
     color: (
-      primary: theme.$paleta-primaria,
-      tertiary: theme.$paleta-terciaria,
+      primary: theme.$primary-palette,
+      tertiary: theme.$tertiary-palette,
       theme-type: color-scheme,
     ),
     typography: Roboto,
@@ -24,34 +24,54 @@ html {
 
   & {
     /* ---------------------------------------------------------------
-       Cores-base da marca Movva. Todos os demais tons (hover, container,
-       gradiente, variante escura) são DERIVADOS destas três via
-       color-mix() nos tokens abaixo.
+       Cores-base da marca Movva: as âncoras de matiz. Servem de
+       preenchimento e de origem dos tints; NÃO servem de cor de texto,
+       porque nenhuma das três alcança 4.5:1 sobre superfície clara.
        --------------------------------------------------------------- */
     --brand-primary-base: #2e6ef5;
     --brand-sucesso-base: #26a269;
     --brand-perigo-base: #e5484d;
 
-    /* Primária responsiva ao tema: no escuro é a primária clareada. */
-    --brand-primary: light-dark(
-      var(--brand-primary-base),
-      color-mix(in srgb, var(--brand-primary-base) 78%, white)
-    );
+    /* Preenchimento primário (fundo de botão, item selecionado, marcador).
+       No escuro clareia, e por isso a tinta por cima dele inverte. */
+    --brand-primary: light-dark(#2e6ef5, #5c8ef7);
 
-    /* Semânticos consumidos pelos componentes. */
-    --app-cor-sucesso: light-dark(
-      var(--brand-sucesso-base),
-      color-mix(in srgb, var(--brand-sucesso-base) 70%, white)
-    );
-    --app-cor-perigo: light-dark(
-      var(--brand-perigo-base),
-      color-mix(in srgb, var(--brand-perigo-base) 70%, white)
-    );
-    --app-gradiente-primario: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--brand-primary) 70%, white),
-      var(--brand-primary)
-    );
+    /* ---------------------------------------------------------------
+       Cores semânticas de TEXTO E ÍCONE. Cada par foi resolvido em OKLCH
+       (matiz e croma da marca preservados, luminosidade deslocada) para
+       cumprir 4.5:1 contra os três fundos de cada tema: superfície,
+       linha zebrada da tabela e superfície elevada.
+       Alterar um destes valores sem refazer a conta quebra a WCAG AA.
+       --------------------------------------------------------------- */
+    --app-cor-primaria-texto: light-dark(#2261e7, #4b86fe);
+    --app-cor-sucesso: light-dark(#067a4b, #26a269);
+    --app-cor-perigo: light-dark(#ca2c37, #f25457);
+    /* Tinta sobre o preenchimento vermelho. Inverte no escuro pelo mesmo
+       motivo do botão primário: lá o vermelho é claro. */
+    --app-cor-perigo-tinta: light-dark(#ffffff, #0d1020);
+
+    /* Marcadores do mapa: ficam sobre tiles claros nos dois temas, então
+       não invertem. Existem como token para nenhum SCSS precisar de hex. */
+    --app-marcador-fundo: var(--brand-primary-base);
+    --app-marcador-contorno: #ffffff;
+
+    /* ---------------------------------------------------------------
+       Movimento. Teto de 250ms: o usuário está numa tarefa, não
+       assistindo a uma coreografia. Desaceleração exponencial, sem
+       bounce. Zerados sob prefers-reduced-motion, no fim deste arquivo.
+       --------------------------------------------------------------- */
+    --app-duracao-rapida: 150ms;
+    --app-duracao-padrao: 200ms;
+    --app-easing: cubic-bezier(0.25, 1, 0.5, 1); /* ease-out-quart */
+
+    /* Escala de empilhamento nomeada, do fundo para a frente.
+       Nada de 999 avulso. */
+    --app-z-mapa-canvas: 1;
+    --app-z-toolbar: 10;
+    --app-z-dropdown: 30;
+    --app-z-skip-link: 100;
+    /* Dentro do pane de marcadores do Leaflet, que já é um contexto próprio. */
+    --app-z-marcador-selecionado: 1000;
 
     /* Neutros (independentes da marca) — agora via light-dark(). */
     --mat-sys-background: light-dark(#f4f6fb, #0b0b0b);
@@ -61,17 +81,23 @@ html {
     --mat-sys-surface-container: light-dark(#ffffff, #141414);
     --mat-sys-surface-container-low: light-dark(#ffffff, #141414);
     --mat-sys-surface-container-high: light-dark(#eaecf5, #242424);
+    /* outline: contorno que IDENTIFICA um componente (>= 3:1, WCAG 1.4.11).
+       outline-variant: divisor decorativo, isento de contraste. */
+    --mat-sys-outline: light-dark(#767a82, #8b8f99);
     --mat-sys-outline-variant: light-dark(#d0d5e8, #3a3a3a);
     /* No escuro, cinza claro para ícones/textos secundários ficarem legíveis. */
     --mat-sys-on-surface-variant: light-dark(#4a5068, #b4b9c9);
 
     /* Tokens do Material derivados da marca. */
     --mat-sys-primary: var(--brand-primary);
-    --mat-sys-on-primary: #ffffff;
+    /* No escuro a primária é clara, então a tinta por cima precisa ser escura. */
+    --mat-sys-on-primary: light-dark(#ffffff, #0d1020);
     --mat-sys-primary-container: color-mix(in srgb, var(--brand-primary) 14%, var(--mat-sys-surface));
-    --mat-sys-on-primary-container: var(--brand-primary);
+    --mat-sys-on-primary-container: var(--app-cor-primaria-texto);
     --mat-sys-tertiary: var(--brand-primary);
-    --mat-sys-on-tertiary: #ffffff;
+    --mat-sys-on-tertiary: light-dark(#ffffff, #0d1020);
+    /* Um único vermelho no app: o erro do Material é o perigo da marca. */
+    --mat-sys-error: var(--app-cor-perigo);
   }
 }
 
@@ -92,21 +118,18 @@ html[data-theme='dark'] {
 :root {
   --login-fundo: var(--mat-sys-background);
   --login-cartao-fundo: var(--mat-sys-surface-container-low);
-  --login-cartao-sombra: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --login-fundo: radial-gradient(ellipse at 50% 40%, #0d1b3e, #0b0b0b);
     --login-cartao-fundo: linear-gradient(135deg, #1e1e1e, #141414);
-    --login-cartao-sombra: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
 }
 
 :root[data-theme='dark'] {
   --login-fundo: radial-gradient(ellipse at 50% 40%, #0d1b3e, #0b0b0b);
   --login-cartao-fundo: linear-gradient(135deg, #1e1e1e, #141414);
-  --login-cartao-sombra: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 html,
@@ -119,11 +142,84 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-/* Gradiente Oficial de Botões Primários (derivado da marca) */
-.mat-mdc-flat-button.mat-primary,
-.mat-mdc-raised-button.mat-primary {
-  background: var(--app-gradiente-primario) !important;
-  color: #ffffff !important;
+/* ---------------------------------------------------------------
+   Acessibilidade estrutural.
+   --------------------------------------------------------------- */
+
+/* Texto só para leitor de tela: rótulos de campos cuja identidade visual
+   já vem do ícone e do placeholder. */
+.apenas-leitor-de-tela {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Pular para o conteúdo: invisível até receber foco por teclado. */
+.pular-para-conteudo {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: var(--app-z-skip-link);
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  border: 1px solid var(--mat-sys-outline);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.pular-para-conteudo:focus-visible {
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------
+   Foco visível. A camada de estado a 12% do Material entrega 1.2:1
+   entre focado e não-focado; a WCAG 2.4.11 exige 3:1. Este anel usa
+   `on-surface`, que passa contra toda superfície do sistema E contra
+   o azul do botão primário. O offset o mantém fora da cor do próprio
+   componente. Os seletores de classe existem para vencer o
+   `outline: none` que o MDC aplica em `.mdc-button`.
+   --------------------------------------------------------------- */
+:focus-visible,
+.mat-mdc-button-base:focus-visible,
+.mat-mdc-icon-button:focus-visible,
+.mat-mdc-menu-item:focus-visible,
+.mat-mdc-option:focus-visible {
+  outline: 2px solid var(--mat-sys-on-surface);
+  outline-offset: 2px;
+}
+
+/* O campo de busca já desenha o próprio anel via :focus-within no
+   contêiner, então o input interno não empilha um segundo. */
+.lista-busca-campo input:focus-visible,
+.mapa-busca-campo input:focus-visible {
+  outline: none;
+}
+
+/* ---------------------------------------------------------------
+   Alvos de toque. Ponteiro grosso (dedo, caneta) exige 44x44px; o
+   padrão do Material 3 entrega 40px. Vai pelos tokens do MDC, não por
+   width/height: brigar de especificidade com a folha do Material é
+   frágil, e o token é o ponto de extensão que ele expõe.
+   Nada muda para quem usa mouse.
+   --------------------------------------------------------------- */
+@media (pointer: coarse) {
+  html {
+    --mdc-icon-button-state-layer-size: 44px;
+    --mdc-filled-button-container-height: 44px;
+    --mdc-outlined-button-container-height: 44px;
+    --mdc-text-button-container-height: 44px;
+    --mdc-protected-button-container-height: 44px;
+    --mat-menu-item-container-height: 48px;
+  }
 }
 
 .botao-terciario {
@@ -136,9 +232,8 @@ body {
   background-color: var(--mat-sys-surface-container-high) !important;
   color: var(--mat-sys-on-surface) !important;
   border-bottom: 1px solid var(--mat-sys-outline-variant);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
-  z-index: 10;
+  z-index: var(--app-z-toolbar);
 }
 
 tr.mat-mdc-header-row {
@@ -162,24 +257,27 @@ tr.mat-mdc-header-row {
 }
 
 /* Campo de busca arredondado — compartilhado pelas listas e pela sidebar do mapa. */
+/* A borda é o único indício do limite do campo: o fundo dele e o da página
+   diferem em 1.05:1. Por isso usa `outline` (>= 3:1), não `outline-variant`. */
 .lista-busca-campo,
 .mapa-busca-campo {
   display: flex;
   align-items: center;
   gap: 6px;
   background-color: var(--mat-sys-surface-container-low);
-  border: 1px solid var(--mat-sys-outline-variant);
+  border: 1px solid var(--mat-sys-outline);
   border-radius: 999px;
   padding: 0 6px 0 14px;
   height: 44px;
   box-sizing: border-box;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color var(--app-duracao-rapida) var(--app-easing);
 }
 
 .lista-busca-campo:focus-within,
 .mapa-busca-campo:focus-within {
   border-color: var(--mat-sys-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary) 18%, transparent);
+  outline: 2px solid var(--mat-sys-on-surface);
+  outline-offset: 2px;
 }
 
 .lista-busca-campo > .mat-icon,
@@ -207,6 +305,8 @@ tr.mat-mdc-header-row {
   color: var(--mat-sys-on-surface-variant);
 }
 
+/* Overlay flutuante: aqui a sombra é o que diz que o elemento saiu do
+   plano da página, então ela não divide o trabalho com uma borda. */
 .lista-busca-resultados {
   position: absolute;
   top: calc(100% + 8px);
@@ -215,11 +315,10 @@ tr.mat-mdc-header-row {
   max-height: 320px;
   overflow-y: auto;
   background-color: var(--mat-sys-surface-container-low);
-  border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   padding: 8px;
-  z-index: 30;
+  z-index: var(--app-z-dropdown);
 }
 
 .busca-resultados-titulo {
@@ -268,32 +367,6 @@ tr.mat-mdc-header-row {
 }
 
 /* ---------------------------------------------------------------
-   Chips reutilizáveis (categoria da CNH / placa) — tabela e cards mobile.
-   --------------------------------------------------------------- */
-.badge-categoria,
-.badge-placa {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.badge-categoria {
-  background-color: var(--mat-sys-surface-container-high);
-  color: var(--mat-sys-on-surface-variant);
-  border: 1px solid var(--mat-sys-outline-variant);
-}
-
-.badge-placa {
-  background-color: color-mix(in srgb, var(--mat-sys-primary) 16%, var(--mat-sys-surface));
-  color: var(--mat-sys-primary);
-}
-
-/* ---------------------------------------------------------------
    Tabelas coloridas (mat-table) das telas de lista: cabeçalho com
    destaque, zebra striping, hover e separadores via tokens (dark ok).
    --------------------------------------------------------------- */
@@ -303,7 +376,7 @@ tr.mat-mdc-header-row {
 }
 
 .tabela-colorida .mat-mdc-row {
-  transition: background-color 0.12s ease;
+  transition: background-color var(--app-duracao-rapida) var(--app-easing);
 }
 
 .tabela-colorida .mat-mdc-row:nth-child(even) {
@@ -317,6 +390,29 @@ tr.mat-mdc-header-row {
 .tabela-colorida .mat-mdc-cell {
   color: var(--mat-sys-on-surface);
   border-bottom-color: var(--mat-sys-outline-variant);
+}
+
+/* ---------------------------------------------------------------
+   Movimento reduzido. Rede de proteção global: qualquer animação
+   futura já nasce coberta. Os indicadores de estado que pulsam
+   (simulação, GPS) NÃO desaparecem — param, e continuam visíveis
+   parados, porque o pulso é decoração e o ponto é a informação.
+   --------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    --app-duracao-rapida: 0.01ms;
+    --app-duracao-padrao: 0.01ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 

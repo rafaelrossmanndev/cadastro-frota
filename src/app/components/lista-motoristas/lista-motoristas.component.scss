@@ -20,10 +20,6 @@
   gap: 12px;
 }
 
-.lista-motoristas-tabela-container {
-  overflow-x: auto;
-}
-
 .lista-motoristas-tabela {
   width: 100%;
 }
@@ -44,8 +40,11 @@
   font-weight: 500;
 }
 
+/* A tabela rola dentro do próprio contêiner. Sem isto, uma coluna a mais
+   empurraria a página inteira para o lado. */
 .lista-motoristas-desktop-container {
   display: block;
+  overflow-x: auto;
 }
 
 .lista-motoristas-mobile-container {
@@ -76,6 +75,7 @@
   }
 
   .lista-busca {
+    flex: none;
     max-width: 100%;
   }
 
@@ -90,11 +90,10 @@
   }
 
   .card-motorista-mobile {
-    background: var(--mat-sys-surface-container-low, #fff);
+    background-color: var(--mat-sys-surface-container-low);
     border: 1px solid var(--mat-sys-outline-variant);
     border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
     gap: 12px;

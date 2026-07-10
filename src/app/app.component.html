@@ -1,5 +1,8 @@
 @if (authService.isAuthenticated()) {
+  <a class="pular-para-conteudo" href="#conteudo-principal">Pular para o conteúdo</a>
   <app-barra-navegacao />
 }
-<router-outlet />
 
+<main id="conteudo-principal" tabindex="-1">
+  <router-outlet />
+</main>

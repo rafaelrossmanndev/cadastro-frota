@@ -1,0 +1,18 @@
+<h2 mat-dialog-title class="dialogo-titulo">{{ dados.titulo }}</h2>
+
+<mat-dialog-content>
+  <p class="dialogo-mensagem">{{ dados.mensagem }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialogo-acoes">
+  <button mat-stroked-button type="button" cdkFocusInitial (click)="cancelar()">Cancelar</button>
+  <button
+    mat-flat-button
+    type="button"
+    [class.dialogo-botao-perigo]="dados.perigo"
+    [class.botao-terciario]="!dados.perigo"
+    (click)="confirmar()"
+  >
+    {{ dados.rotuloConfirmar }}
+  </button>
+</mat-dialog-actions>

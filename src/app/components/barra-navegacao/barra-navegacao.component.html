@@ -18,12 +18,37 @@
     </a>
   </nav>
 
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menuNavegacaoMobile"
+    matTooltip="Menu"
+    aria-label="Abrir menu de navegação"
+    class="barra-navegacao-hamburguer"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menuNavegacaoMobile="matMenu">
+    <a mat-menu-item routerLink="/mapa" routerLinkActive="barra-navegacao-link-ativo">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </a>
+    <a mat-menu-item routerLink="/motoristas" routerLinkActive="barra-navegacao-link-ativo">
+      <mat-icon>badge</mat-icon>
+      <span>Motoristas</span>
+    </a>
+    <a mat-menu-item routerLink="/veiculos" routerLinkActive="barra-navegacao-link-ativo">
+      <mat-icon>directions_car</mat-icon>
+      <span>Frota</span>
+    </a>
+  </mat-menu>
+
   <span class="barra-navegacao-espacador"></span>
 
   <button
     mat-icon-button
     [matMenuTriggerFor]="menuTema"
     matTooltip="Tema"
+    [attr.aria-label]="'Tema: ' + rotuloTema() + '. Alterar tema'"
     class="barra-navegacao-tema"
   >
     <mat-icon>{{ iconeTema() }}</mat-icon>
@@ -43,7 +68,13 @@
     </button>
   </mat-menu>
 
-  <button mat-icon-button [matMenuTriggerFor]="menuPerfil" class="barra-navegacao-perfil">
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menuPerfil"
+    matTooltip="Conta"
+    [attr.aria-label]="'Conta de ' + (authService.usuarioLogado()?.nome ?? 'usuário') + '. Abrir menu'"
+    class="barra-navegacao-perfil"
+  >
     <mat-icon>account_circle</mat-icon>
   </button>
   <mat-menu #menuPerfil="matMenu" xPosition="before">

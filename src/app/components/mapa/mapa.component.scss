@@ -40,6 +40,7 @@
   /* Folga para o anel de foco (box-shadow 3px) da busca não ser clipado pelo
      overflow do painel — o overflow-y:auto faz o overflow-x computar p/ auto. */
   padding: 4px;
+  min-width: 0;
 }
 
 /* Barra de pesquisa da sidebar: layout do botão de limpar (o campo
@@ -57,26 +58,26 @@
   }
 }
 
+/* No toque, o alvo volta aos 44px mínimos, sem alargar o campo. */
+@media (pointer: coarse) {
+  .mapa-busca-campo button {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+  }
+}
+
+/* Superfície em repouso: distingue-se por tom e borda de 1px, nunca por
+   sombra. O card não é clicável, então também não tem estado de hover. */
 .mapa-card {
   border: 1px solid var(--mat-sys-outline-variant);
   background-color: var(--mat-sys-surface-container-low);
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
   overflow: hidden;
 
-  &:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  }
-
-  /* Cabeçalho do card com faixa de destaque azul */
   mat-card-header {
     padding: 16px;
-    background: linear-gradient(
-      135deg,
-      var(--mat-sys-primary-container),
-      color-mix(in srgb, var(--mat-sys-primary-container) 45%, var(--mat-sys-surface))
-    );
+    background-color: var(--mat-sys-primary-container);
     border-bottom: 1px solid var(--mat-sys-outline-variant);
   }
 
@@ -87,7 +88,7 @@
   }
 
   mat-card-subtitle {
-    color: var(--mat-sys-primary);
+    color: var(--app-cor-primaria-texto);
     font-weight: 500;
   }
 }
@@ -141,7 +142,6 @@
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--mat-sys-outline-variant);
-  border-left: 3px solid transparent;
   background-color: var(--mat-sys-surface-container-low);
   border-radius: 12px;
   cursor: pointer;
@@ -149,7 +149,8 @@
   font-weight: 500;
   text-align: left;
   color: var(--mat-sys-on-surface);
-  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: background-color var(--app-duracao-rapida) var(--app-easing),
+    border-color var(--app-duracao-rapida) var(--app-easing);
 
   & + & {
     margin-top: 8px;
@@ -173,12 +174,11 @@
     border-color: color-mix(in srgb, var(--mat-sys-primary) 40%, var(--mat-sys-outline-variant));
   }
 
-  /* Estado selecionado (sincronizado com o marcador destacado no mapa) */
+  /* Estado selecionado (sincronizado com o marcador destacado no mapa).
+     Borda inteira + tinta de fundo, sem faixa lateral. */
   &.selecionado {
     border-color: var(--mat-sys-primary);
-    border-left-color: var(--mat-sys-primary);
     background-color: var(--mat-sys-primary-container);
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--mat-sys-primary) 22%, transparent);
 
     mat-icon {
       color: var(--mat-sys-on-primary);
@@ -297,19 +297,19 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
-/* Área do Mapa */
+/* Área do Mapa. A borda define; sem sombra somada a ela. */
 .mapa-container-externo {
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   background-color: var(--mat-sys-surface-container-high);
+  min-width: 0;
 }
 
 .mapa-leaflet-canvas {
   width: 100%;
   height: 620px;
-  z-index: 1;
+  z-index: var(--app-z-mapa-canvas);
 }
 
 /* Faixa inferior: replay + ferramentas de teste */
@@ -406,12 +406,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #2e6ef5;
-  border: 2px solid #ffffff;
+  background-color: var(--app-marcador-fundo);
+  border: 2px solid var(--app-marcador-contorno);
+  /* O SVG do carro herda esta cor via fill="currentColor". */
+  color: var(--app-marcador-contorno);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   transform: rotate(-45deg);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform var(--app-duracao-rapida) var(--app-easing),
+    box-shadow var(--app-duracao-rapida) var(--app-easing);
 
   svg {
     transform: rotate(45deg);
@@ -423,8 +426,9 @@
   width: 40px;
   height: 40px;
   border-width: 3px;
-  box-shadow: 0 4px 12px rgba(46, 110, 245, 0.55), 0 0 0 4px rgba(46, 110, 245, 0.25);
-  z-index: 1000;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--app-marcador-fundo) 55%, transparent),
+    0 0 0 4px color-mix(in srgb, var(--app-marcador-fundo) 25%, transparent);
+  z-index: var(--app-z-marcador-selecionado);
 
   svg {
     width: 22px;
@@ -446,8 +450,8 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: var(--mat-sys-primary);
-  border: 2px solid #ffffff;
+  background-color: var(--app-marcador-fundo);
+  border: 2px solid var(--app-marcador-contorno);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   z-index: 2;
   position: absolute;
@@ -458,8 +462,8 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
-  border: 1.5px solid var(--mat-sys-primary);
+  background-color: color-mix(in srgb, var(--app-marcador-fundo) 35%, transparent);
+  border: 1.5px solid var(--app-marcador-fundo);
   animation: pulse-anel-gps 1.6s infinite ease-out;
   z-index: 1;
 }
@@ -472,6 +476,17 @@
   100% {
     transform: scale(2.4);
     opacity: 0;
+  }
+}
+
+/* O anel do GPS para de pulsar, mas continua como halo estático: ele é parte
+   de como o marcador ativo se distingue dos demais. Zerar a animação sem isto
+   o deixaria no último keyframe, invisível. */
+@media (prefers-reduced-motion: reduce) {
+  ::ng-deep .marcador-pulsante-anel {
+    animation: none !important;
+    transform: scale(1.4);
+    opacity: 0.45;
   }
 }
 
@@ -507,5 +522,21 @@
 
   .mapa-leaflet-canvas {
     height: 400px;
+  }
+
+  .form-coordenadas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mapa-ferramenta-bloco {
+    align-items: center;
+    text-align: center;
+    max-width: 360px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .mapa-ferramentas-teste mat-panel-description {
+    display: none;
   }
 }

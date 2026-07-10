@@ -1,0 +1,503 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-10T14:59:36.552Z",
+  "title": "Design System: Movva · Gestão de Frota",
+  "extensions": {
+    "colorMeta": {
+      "signal-blue": {
+        "role": "primary",
+        "displayName": "Azul Sinal",
+        "canonical": "#2e6ef5",
+        "tonalRamp": [
+          "#0a1c44",
+          "#122f6d",
+          "#1a4396",
+          "#2358c4",
+          "#2e6ef5",
+          "#5c8ef7",
+          "#8aaefa",
+          "#c4d5fc"
+        ]
+      },
+      "signal-blue-lifted": {
+        "role": "primary",
+        "displayName": "Azul Sinal Elevado",
+        "canonical": "#5c8ef7",
+        "tonalRamp": [
+          "#132a56",
+          "#1d3f80",
+          "#2755a9",
+          "#3f74d6",
+          "#5c8ef7",
+          "#84a8f9",
+          "#abc4fb",
+          "#d3e0fd"
+        ]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Verde Validade",
+        "canonical": "#26a269",
+        "tonalRamp": [
+          "#06291a",
+          "#0b4229",
+          "#115c3a",
+          "#187f4f",
+          "#26a269",
+          "#4fbc88",
+          "#84d3ac",
+          "#c0e9d3"
+        ]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Vermelho Vencimento",
+        "canonical": "#e5484d",
+        "tonalRamp": [
+          "#3d0c0e",
+          "#5f1418",
+          "#821d22",
+          "#b32c32",
+          "#e5484d",
+          "#ec7275",
+          "#f29d9f",
+          "#f9cdce"
+        ]
+      },
+      "bg-light": {
+        "role": "neutral",
+        "displayName": "Névoa Azulada",
+        "canonical": "#f4f6fb",
+        "tonalRamp": [
+          "#0b0c10",
+          "#1a1c24",
+          "#2f3240",
+          "#4a4e60",
+          "#7b8095",
+          "#adb2c2",
+          "#d5d9e5",
+          "#f4f6fb"
+        ]
+      },
+      "surface-light": {
+        "role": "neutral",
+        "displayName": "Superfície",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#141414",
+          "#242424",
+          "#3a3a3a",
+          "#5c5c5c",
+          "#8a8a8a",
+          "#b8b8b8",
+          "#e0e0e0",
+          "#ffffff"
+        ]
+      },
+      "surface-raised-light": {
+        "role": "neutral",
+        "displayName": "Superfície Elevada",
+        "canonical": "#eaecf5",
+        "tonalRamp": [
+          "#0d0f16",
+          "#1b1e2a",
+          "#303449",
+          "#4b5069",
+          "#7a8098",
+          "#a9aec2",
+          "#cdd1e0",
+          "#eaecf5"
+        ]
+      },
+      "ink-light": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#0d1020",
+        "tonalRamp": [
+          "#0d1020",
+          "#1a1f38",
+          "#2b3253",
+          "#414a72",
+          "#5f6a94",
+          "#8b93b3",
+          "#b9bfd3",
+          "#e4e7f0"
+        ]
+      },
+      "ink-muted-light": {
+        "role": "neutral",
+        "displayName": "Tinta Apagada",
+        "canonical": "#4a5068",
+        "tonalRamp": [
+          "#12141b",
+          "#20242f",
+          "#333849",
+          "#4a5068",
+          "#6d7490",
+          "#959bb2",
+          "#bfc3d1",
+          "#e6e8ee"
+        ]
+      },
+      "outline-light": {
+        "role": "neutral",
+        "displayName": "Traço",
+        "canonical": "#d0d5e8",
+        "tonalRamp": [
+          "#15171f",
+          "#252936",
+          "#3b4054",
+          "#565d78",
+          "#7d849e",
+          "#a4aac0",
+          "#d0d5e8",
+          "#edeff6"
+        ]
+      },
+      "bg-dark": {
+        "role": "neutral",
+        "displayName": "Névoa Azulada (escuro)",
+        "canonical": "#0b0b0b",
+        "tonalRamp": [
+          "#000000",
+          "#0b0b0b",
+          "#141414",
+          "#242424",
+          "#3a3a3a",
+          "#6b6b6b",
+          "#a3a3a3",
+          "#d6d6d6"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Superfície (escuro)",
+        "canonical": "#141414",
+        "tonalRamp": [
+          "#000000",
+          "#0b0b0b",
+          "#141414",
+          "#242424",
+          "#3a3a3a",
+          "#6b6b6b",
+          "#a3a3a3",
+          "#d6d6d6"
+        ]
+      },
+      "surface-raised-dark": {
+        "role": "neutral",
+        "displayName": "Superfície Elevada (escuro)",
+        "canonical": "#242424",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#141414",
+          "#1c1c1c",
+          "#242424",
+          "#3a3a3a",
+          "#5e5e5e",
+          "#909090",
+          "#c9c9c9"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Tinta (escuro)",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#242424",
+          "#3a3a3a",
+          "#5c5c5c",
+          "#8a8a8a",
+          "#b4b9c9",
+          "#d5d8e1",
+          "#ecedf2",
+          "#ffffff"
+        ]
+      },
+      "ink-muted-dark": {
+        "role": "neutral",
+        "displayName": "Tinta Apagada (escuro)",
+        "canonical": "#b4b9c9",
+        "tonalRamp": [
+          "#1a1c22",
+          "#2b2e38",
+          "#434754",
+          "#5f6474",
+          "#828798",
+          "#b4b9c9",
+          "#d3d6e0",
+          "#eeeff3"
+        ]
+      },
+      "outline-dark": {
+        "role": "neutral",
+        "displayName": "Traço (escuro)",
+        "canonical": "#3a3a3a",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#141414",
+          "#242424",
+          "#3a3a3a",
+          "#5c5c5c",
+          "#8a8a8a",
+          "#b8b8b8",
+          "#e0e0e0"
+        ]
+      },
+      "success-light": {
+        "role": "tertiary",
+        "displayName": "Verde Validade (texto, claro)",
+        "canonical": "#067a4b",
+        "tonalRamp": [
+          "#02120b",
+          "#032414",
+          "#05361f",
+          "#065b34",
+          "#067a4b",
+          "#2fa273",
+          "#79c7a5",
+          "#c3e6d5"
+        ]
+      },
+      "danger-light": {
+        "role": "tertiary",
+        "displayName": "Vermelho Vencimento (texto, claro)",
+        "canonical": "#ca2c37",
+        "tonalRamp": [
+          "#2c0a0d",
+          "#4d1116",
+          "#701920",
+          "#9d222b",
+          "#ca2c37",
+          "#e05e67",
+          "#ec9299",
+          "#f6c9cd"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Título de tela. Cai para 1.5rem abaixo de 768px, por breakpoint, nunca por clamp()."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Título de cartão e de painel."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido e valores de dado. 0.88–0.9rem em linhas densas."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Rótulo de campo em cartão, sempre em Tinta Apagada, pareado com valor em Tinta."
+      },
+      "overline": {
+        "displayName": "Overline",
+        "purpose": "Cabeçalho de grupo em dropdown de busca. Único uso legítimo de caixa alta com tracking."
+      }
+    },
+    "shadows": [
+      {
+        "name": "floating-overlay",
+        "value": "0 8px 24px rgba(0,0,0,0.15)",
+        "purpose": "Dropdown de busca, menus, diálogos. Sai do plano; sem borda."
+      },
+      {
+        "name": "map-marker",
+        "value": "0 2px 6px rgba(0,0,0,0.35)",
+        "purpose": "Marcador sobre tiles do mapa, não sobre superfície do sistema."
+      }
+    ],
+    "motion": [
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Padrão do sistema: hover, borda, cor de fundo."
+      },
+      {
+        "name": "duration-standard",
+        "value": "200ms",
+        "purpose": "Transições de superfície e sombra."
+      },
+      {
+        "name": "duration-max",
+        "value": "250ms",
+        "purpose": "Teto absoluto. Nada no produto passa disso."
+      },
+      {
+        "name": "ease-standard",
+        "value": "ease",
+        "purpose": "Curva padrão para transições de estado."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "768px"
+      },
+      {
+        "name": "tablet",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "A ação da tela: Salvar, Novo motorista, Novo veículo. Uma por vista.",
+      "html": "<button class=\"ds-btn-primary\">Novo motorista</button>",
+      "css": ".ds-btn-primary { background: var(--mat-sys-primary, #2e6ef5); color: #fff; font: 500 0.875rem/1 Roboto, 'Helvetica Neue', sans-serif; letter-spacing: 0.01em; height: 40px; padding: 0 24px; border: none; border-radius: 999px; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-primary:hover { background: #5c8ef7; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 18%, transparent); } .ds-btn-primary:disabled { background: color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 30%, transparent); cursor: not-allowed; }"
+    },
+    {
+      "name": "Outlined Button",
+      "kind": "button",
+      "refersTo": "button-outlined",
+      "description": "Ação secundária ao lado da primária. O Cancelar do par Salvar/Cancelar.",
+      "html": "<button class=\"ds-btn-outlined\">Cancelar</button>",
+      "css": ".ds-btn-outlined { background: transparent; color: var(--mat-sys-primary, #2e6ef5); font: 500 0.875rem/1 Roboto, 'Helvetica Neue', sans-serif; height: 40px; padding: 0 24px; border: 1px solid var(--mat-sys-outline-variant, #d0d5e8); border-radius: 999px; cursor: pointer; transition: background-color 150ms ease, border-color 150ms ease; } .ds-btn-outlined:hover { background: var(--mat-sys-surface-container-high, #eaecf5); } .ds-btn-outlined:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 18%, transparent); }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "A única exceção ao appearance=outline: pílula de 44px com lupa à esquerda.",
+      "html": "<div class=\"ds-input-search\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"11\" cy=\"11\" r=\"7\"></circle><path d=\"m20 20-3.5-3.5\"></path></svg><input type=\"text\" placeholder=\"Buscar motorista...\" /></div>",
+      "css": ".ds-input-search { display: flex; align-items: center; gap: 6px; height: 44px; padding: 0 6px 0 14px; background: var(--mat-sys-surface-container-low, #fff); border: 1px solid var(--mat-sys-outline-variant, #d0d5e8); border-radius: 999px; transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input-search svg { color: var(--mat-sys-on-surface-variant, #4a5068); flex: none; } .ds-input-search input { flex: 1 1 auto; min-width: 0; border: none; outline: none; background: transparent; font: 400 1rem/1.5 Roboto, 'Helvetica Neue', sans-serif; color: var(--mat-sys-on-surface, #0d1020); } .ds-input-search input::placeholder { color: var(--mat-sys-on-surface-variant, #4a5068); } .ds-input-search:focus-within { border-color: var(--mat-sys-primary, #2e6ef5); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 18%, transparent); }"
+    },
+    {
+      "name": "Data Card (mobile)",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A tabela do desktop virada cartão abaixo de 768px. Cabeçalho sangrado, pares rótulo-valor.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-header\"><span class=\"ds-card-title\">Maria Oliveira Santos</span></div><div class=\"ds-card-row\"><span class=\"ds-card-label\">CNH</span><span class=\"ds-card-value\">02650306461 (AB)</span></div><div class=\"ds-card-row\"><span class=\"ds-card-label\">Validade da CNH</span><span class=\"ds-card-ok\">Válida até 15/06/2027</span></div></div>",
+      "css": ".ds-card { background: var(--mat-sys-surface-container-low, #fff); border: 1px solid var(--mat-sys-outline-variant, #d0d5e8); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-family: Roboto, 'Helvetica Neue', sans-serif; } .ds-card-header { background: var(--mat-sys-surface-container-high, #eaecf5); padding: 8px 16px; margin: -16px -16px 8px -16px; border-bottom: 1px solid var(--mat-sys-outline-variant, #d0d5e8); } .ds-card-title { font-weight: 600; font-size: 1.05rem; color: var(--mat-sys-on-surface, #0d1020); } .ds-card-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; } .ds-card-label { font-weight: 500; font-size: 0.85rem; color: var(--mat-sys-on-surface-variant, #4a5068); } .ds-card-value { font-weight: 500; color: var(--mat-sys-on-surface, #0d1020); } .ds-card-ok { font-weight: 500; color: #26a269; }"
+    },
+    {
+      "name": "Selectable List Item",
+      "kind": "custom",
+      "refersTo": "list-item",
+      "description": "Veículo no painel do mapa. O estado selecionado é espelhado pelo marcador no mapa.",
+      "html": "<button class=\"ds-list-item ds-selected\"><span class=\"ds-list-icon\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M5 11l1.5-4.5h11L19 11m-1.5 5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m-11 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3M18.92 6c-.2-.58-.76-1-1.42-1h-11c-.66 0-1.22.42-1.42 1L3 12v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-8z\"></path></svg></span><span>Volkswagen Delivery Express (ABC1D23)</span></button>",
+      "css": ".ds-list-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1px solid var(--mat-sys-outline-variant, #d0d5e8); border-radius: 12px; background: var(--mat-sys-surface-container-low, #fff); cursor: pointer; font: 500 1rem/1.4 Roboto, 'Helvetica Neue', sans-serif; text-align: left; color: var(--mat-sys-on-surface, #0d1020); transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease; } .ds-list-icon { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; color: var(--mat-sys-primary, #2e6ef5); background: color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 14%, #fff); flex: none; } .ds-list-item:hover { background: var(--mat-sys-surface-container-high, #eaecf5); } .ds-list-item:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 18%, transparent); } .ds-list-item.ds-selected { border-color: var(--mat-sys-primary, #2e6ef5); background: color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 14%, #fff); box-shadow: 0 2px 8px color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 22%, transparent); } .ds-list-item.ds-selected .ds-list-icon { color: #fff; background: var(--mat-sys-primary, #2e6ef5); }"
+    },
+    {
+      "name": "Nav Segmented Control",
+      "kind": "nav",
+      "refersTo": "nav-link-active",
+      "description": "Navegação do desktop. Abaixo de 768px é substituída inteiramente por um menu hambúrguer.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link ds-active\" href=\"#\">Home</a><a class=\"ds-nav-link\" href=\"#\">Motoristas</a><a class=\"ds-nav-link\" href=\"#\">Frota</a></nav>",
+      "css": ".ds-nav { display: inline-flex; align-items: center; gap: 2px; padding: 4px; border-radius: 999px; background: var(--mat-sys-surface, #fff); border: 1px solid var(--mat-sys-outline-variant, #d0d5e8); box-shadow: inset 0 1px 2px rgba(0,0,0,0.06); } .ds-nav-link { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 16px; border-radius: 999px; text-decoration: none; font: 500 0.875rem/1 Roboto, 'Helvetica Neue', sans-serif; color: var(--mat-sys-on-surface-variant, #4a5068); transition: background-color 200ms ease, color 200ms ease; } .ds-nav-link:hover:not(.ds-active) { background: var(--mat-sys-surface-container-high, #eaecf5); color: var(--mat-sys-on-surface, #0d1020); } .ds-nav-link:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary, #2e6ef5) 18%, transparent); } .ds-nav-link.ds-active { background: var(--mat-sys-primary, #2e6ef5); color: #fff; }"
+    },
+    {
+      "name": "Detail Row",
+      "kind": "custom",
+      "refersTo": "detail-row",
+      "description": "Par rótulo-valor no painel de detalhe do mapa. Fundo tonal, sem sombra.",
+      "html": "<div class=\"ds-detail-row\"><span class=\"ds-detail-label\">CNH</span><span class=\"ds-detail-value\">02650306461 (AB)</span></div>",
+      "css": ".ds-detail-row { display: flex; align-items: center; justify-content: space-between; font: 400 0.88rem/1.4 Roboto, 'Helvetica Neue', sans-serif; padding: 8px 12px; border-radius: 8px; background: var(--mat-sys-surface-container-high, #eaecf5); } .ds-detail-label { color: var(--mat-sys-on-surface-variant, #4a5068); } .ds-detail-value { font-weight: 600; color: var(--mat-sys-on-surface, #0d1020); }"
+    },
+    {
+      "name": "Plate",
+      "kind": "chip",
+      "refersTo": "card",
+      "description": "Placa do veículo. Nunca é badge: texto em Azul Sinal, peso 700, no desktop e no mobile.",
+      "html": "<span class=\"ds-plate\">ABC1D23</span>",
+      "css": ".ds-plate { font: 700 1rem/1.4 Roboto, 'Helvetica Neue', sans-serif; color: var(--mat-sys-primary, #2e6ef5); letter-spacing: 0.01em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Painel de Bordo",
+    "overview": "Um painel de bordo se lê de relance. O motorista não estuda o velocímetro; ele o consulta enquanto faz outra coisa. Esse é o contrato deste sistema: hierarquia forte o bastante para que a informação crítica chegue primeiro, alvos generosos o bastante para o polegar, e nenhum elemento competindo com o dado que importa. A interface não é o assunto. A frota é.\n\nA densidade existe, mas sempre a serviço da leitura. Uma tabela de motoristas no desktop vira uma pilha de cartões no celular porque a mesma informação precisa sobreviver à mudança de contexto, não porque cartões são bonitos. O azul é a única cor de marca e aparece pouco: onde ele está, alguma coisa é acionável, atual ou selecionada. Todo o resto é neutro, e os neutros carregam um traço de azul (não de calor) porque a marca é fria.\n\nO sistema rejeita, explicitamente: o template Material cru, com as cores e formas de fábrica do Angular Material; o dashboard SaaS genérico, de cards de métrica gigante e gradientes decorativos; o ERP corporativo legado, cinza sobre cinza e denso sem hierarquia; e a landing page de startup, com hero enorme, eyebrow em caps e seções numeradas. O framework deve desaparecer atrás da marca.",
+    "keyCharacteristics": [
+      "Uma única família tipográfica (Roboto), em escala fixa em rem — nunca fluida.",
+      "Um único acento cromático (#2e6ef5), reservado a ação, seleção e estado.",
+      "Neutros levemente azulados; profundidade por tom antes de sombra.",
+      "Tema claro e escuro nativos, via light-dark() sobre tokens — jamais cor hardcoded.",
+      "Responsividade estrutural (tabela vira cartão, nav vira hambúrguer), não tipografia elástica."
+    ],
+    "rules": [
+      {
+        "name": "A Regra do Sinal Único",
+        "body": "O Azul Sinal ocupa no máximo 10% de qualquer tela. Ele marca o que é acionável, o que está selecionado e o que tem foco — nada mais. Um azul usado para \"dar vida\" a um cabeçalho é um azul que deixou de significar alguma coisa.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Estado Falado",
+        "body": "Nenhum estado se comunica apenas por cor. \"Vencida em 10/03/2024\" é vermelha e diz que venceu. Se apagar a cor da tela e o significado sumir, o estado está mal desenhado.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Token",
+        "body": "Toda cor sai de uma variável CSS resolvida por light-dark(). Um hex literal em arquivo de componente é um bug de tema escuro esperando acontecer, não uma escolha estética.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Escala Fixa",
+        "body": "Nada de clamp() na tipografia. Um usuário de produto está a uma distância constante da tela; um título que encolhe dentro de uma sidebar fica pior, não melhor. Tamanhos em rem, mudanças por breakpoint.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra da Família Única",
+        "body": "Uma família para tudo: títulos, botões, rótulos, dados, tabelas. Pareamento de fontes é gramática de superfície de marca, não de ferramenta.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Eyebrow Proibido",
+        "body": "Caixa alta com tracking acima de cada seção é andaime de landing page. O único uso legítimo é o Overline, dentro de dropdown de resultados.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Tom em Repouso",
+        "body": "Superfícies paradas não projetam sombra. Se dois planos precisam se distinguir sem que nada esteja acontecendo, use o próximo degrau tonal e uma borda de 1px.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra do Fantasma",
+        "body": "Proibido combinar border: 1px solid com box-shadow de blur maior ou igual a 16px no mesmo elemento. Escolha um: a borda define, ou a sombra eleva. Os dois juntos são o cartão-fantasma, e denunciam interface gerada sem decisão.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra dos 250ms",
+        "body": "Nenhuma transição passa de 250ms. O usuário está numa tarefa, não assistindo a uma coreografia. O padrão do sistema é 150ms, com ease.",
+        "section": "components"
+      },
+      {
+        "name": "A Regra do Movimento Devolvido",
+        "body": "Toda animação tem alternativa sob prefers-reduced-motion: reduce, garantida por uma rede global em styles.scss. Indicador de estado para, mas não some.",
+        "section": "components"
+      },
+      {
+        "name": "A Regra da Tinta que Inverte",
+        "body": "No tema escuro a primária e o vermelho clareiam, então a tinta por cima deles escurece. Branco sobre um preenchimento claro entrega 3.15:1.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do derivar toda cor de um token --mat-sys-* ou --brand-*, resolvido por light-dark(). Teste toda tela nos dois temas antes de considerá-la pronta.",
+      "Do manter o Azul Sinal (#2e6ef5) abaixo de 10% da área da tela, reservado a ação primária, seleção e foco.",
+      "Do acompanhar todo estado semântico de texto ou ícone, nunca só de cor: \"Vencida em 10/03/2024\", não um ponto vermelho.",
+      "Do usar appearance=outline em todo mat-form-field. O campo de busca em pílula é a única exceção do sistema.",
+      "Do distinguir superfícies em repouso por degrau tonal (Superfície Elevada) e borda de 1px.",
+      "Do garantir foco visível em todo alvo interativo, incluindo o hambúrguer do mobile e os controles do mapa.",
+      "Do usar escala fixa em rem e trocar tamanhos por breakpoint (768px, 1024px).",
+      "Do manter cantos em 12px para cartões e 16px para o container do mapa."
+    ],
+    "donts": [
+      "Don't entregar template Material cru: cores e formas de fábrica do Angular Material, componente sem customização, cara de projeto de bootcamp.",
+      "Don't construir dashboard SaaS genérico: card de métrica gigante, gradiente decorativo, grid infinito de cartões idênticos com ícone e título.",
+      "Don't produzir ERP corporativo legado: cinza sobre cinza, tabela apertada, densidade sem hierarquia, formulário que parece planilha.",
+      "Don't importar gramática de landing page de startup: hero enorme, eyebrow em caixa alta acima de cada seção, texto em gradiente, seções numeradas 01/02/03.",
+      "Don't combinar border: 1px solid com box-shadow de blur maior ou igual a 16px no mesmo elemento (a Regra do Fantasma).",
+      "Don't usar border-radius acima de 16px em cartão, seção ou campo. Pílula só em botão, chip e campo de busca.",
+      "Don't usar border-left ou border-right maior que 1px como faixa colorida de destaque.",
+      "Don't aplicar background-clip: text com gradiente. O sistema não tem texto em gradiente.",
+      "Don't reintroduzir badges para categoria de CNH ou placa. Categoria é texto entre parênteses; placa é texto em Azul Sinal e peso 700.",
+      "Don't escrever hex literal em SCSS de componente. Se o token não existe, crie o token.",
+      "Don't animar acima de 250ms, nem enviar animação sem alternativa em prefers-reduced-motion.",
+      "Don't deixar o toolbar estourar a largura da viewport. Se o header rola na horizontal, o layout está errado — não é o usuário que precisa arrastar."
+    ]
+  }
+}

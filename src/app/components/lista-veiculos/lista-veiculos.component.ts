@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { VeiculoService } from '../../services/veiculo.service';
+import { ConfirmacaoService } from '../../services/confirmacao.service';
 import { Veiculo, VeiculoComMotorista } from '../../models/veiculo.model';
 import { filtrarVeiculos } from '../../utils/busca.util';
 
@@ -16,6 +17,7 @@ import { filtrarVeiculos } from '../../utils/busca.util';
 })
 export class ListaVeiculosComponent {
   protected readonly veiculoService = inject(VeiculoService);
+  private readonly confirmacaoService = inject(ConfirmacaoService);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
 
   readonly colunasExibidas = ['placa', 'veiculo', 'anoFabricacao', 'cor', 'motorista', 'acoes'];
@@ -74,8 +76,17 @@ export class ListaVeiculosComponent {
   }
 
   removerVeiculo(veiculo: Veiculo): void {
-    if (confirm(`Remover o veículo de placa "${veiculo.placa}"?`)) {
-      this.veiculoService.remover(veiculo.id);
-    }
+    this.confirmacaoService
+      .confirmar({
+        titulo: 'Remover veículo',
+        mensagem: `O veículo de placa ${veiculo.placa} será removido da frota. Esta ação não pode ser desfeita.`,
+        rotuloConfirmar: 'Remover',
+        perigo: true,
+      })
+      .subscribe((confirmado) => {
+        if (confirmado) {
+          this.veiculoService.remover(veiculo.id);
+        }
+      });
   }
 }

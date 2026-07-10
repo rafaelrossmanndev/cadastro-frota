@@ -33,7 +33,8 @@
   gap: 4px;
   line-height: 1;
   color: var(--mat-sys-on-surface-variant);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color var(--app-duracao-padrao) var(--app-easing),
+    color var(--app-duracao-padrao) var(--app-easing);
   box-sizing: border-box;
 
   mat-icon {
@@ -90,6 +91,11 @@
   margin-left: 8px;
 }
 
+// Botão hambúrguer: só existe no mobile, escondido por padrão no desktop.
+.barra-navegacao-hamburguer {
+  display: none;
+}
+
 .barra-navegacao-menu-info {
   padding: 12px 16px;
   background-color: var(--mat-sys-surface-container-high);
@@ -114,12 +120,11 @@
 
 // Responsividade Mobile
 @media (max-width: 768px) {
-  .barra-navegacao-link-texto {
+  .barra-navegacao-nav {
     display: none;
   }
 
-  .barra-navegacao-nav a[mat-button] {
-    padding: 0 10px;
-    height: 34px;
+  .barra-navegacao-hamburguer {
+    display: inline-flex;
   }
 }

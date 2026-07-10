@@ -12,14 +12,16 @@
       <!-- Barra de pesquisa (motoristas + veículos) -->
       <div class="mapa-busca-campo">
         <mat-icon>search</mat-icon>
+        <label class="apenas-leitor-de-tela" for="busca-mapa">Buscar motorista ou veículo</label>
         <input
+          id="busca-mapa"
           type="text"
           placeholder="Buscar motorista ou veículo..."
           [value]="buscaService.termo()"
           (input)="aoDigitarBusca($event)"
         />
         @if (buscaService.termo()) {
-          <button mat-icon-button matTooltip="Limpar" (click)="limparBusca()">
+          <button mat-icon-button matTooltip="Limpar" aria-label="Limpar busca" (click)="limparBusca()">
             <mat-icon>close</mat-icon>
           </button>
         }

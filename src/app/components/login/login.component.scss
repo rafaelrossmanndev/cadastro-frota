@@ -10,6 +10,8 @@
   box-sizing: border-box;
 }
 
+/* Superfície em repouso: borda de 1px define o limite, sem sombra somada.
+   Raio no teto de 16px da escala de cartões. */
 .login-wrapper {
   display: flex;
   flex-direction: row;
@@ -18,13 +20,11 @@
   width: 100%;
   max-width: 850px;
   background: var(--login-cartao-fundo);
-  border-radius: 20px;
-  box-shadow: var(--login-cartao-sombra);
+  border-radius: 16px;
   border: 1px solid var(--mat-sys-outline-variant);
   overflow: hidden;
   padding: 40px;
   gap: 40px;
-  transition: all 0.3s ease;
 }
 
 .login-marca-secao {
@@ -52,17 +52,11 @@
 }
 
 .login-marca-texto {
-  h2 {
-    margin: 0 0 8px 0;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--mat-sys-primary);
-  }
-
   p {
     margin: 0;
-    font-size: 0.95rem;
-    color: var(--mat-sys-on-surface-variant);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--mat-sys-primary);
   }
 }
 
@@ -88,11 +82,12 @@
     padding: 0 0 24px 0;
     margin: 0;
 
-    mat-card-title {
+    /* O título é o <h1> da página; zera a margem do heading. */
+    [mat-card-title] {
       font-size: 1.6rem;
       font-weight: 700;
       color: var(--mat-sys-on-surface);
-      margin-bottom: 4px;
+      margin: 0 0 4px 0;
     }
 
     mat-card-subtitle {
@@ -140,17 +135,32 @@
   margin-top: 16px;
 }
 
+/* É um <button>: aciona um comportamento, não navega. Aparência de link. */
 .login-link-esqueceu {
+  padding: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
   font-size: 0.85rem;
   font-weight: 500;
   text-decoration: none;
-  color: var(--mat-sys-tertiary);
-  transition: opacity 0.2s;
+  color: var(--app-cor-primaria-texto);
 
   &:hover {
-    opacity: 0.8;
     text-decoration: underline;
   }
+}
+
+.login-aviso {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background-color: var(--mat-sys-surface-container-high);
+  border: 1px solid var(--mat-sys-outline-variant);
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .login-credenciais-dica {
@@ -198,8 +208,8 @@
   }
 
   .login-marca-texto {
-    h2 {
-      font-size: 1.5rem;
+    p {
+      font-size: 1.1rem;
     }
   }
 

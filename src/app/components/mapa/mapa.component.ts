@@ -14,7 +14,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
 
 import * as L from 'leaflet';
 
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { VeiculoService } from '../../services/veiculo.service';
+import { VeiculoComMotorista } from '../../models/veiculo.model';
 import { MotoristaService } from '../../services/motorista.service';
 import { RastreamentoService, Coordenada } from '../../services/rastreamento.service';
 import { RoteamentoService } from '../../services/roteamento.service';
@@ -51,9 +53,18 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
   protected readonly selecaoService = inject(SelecaoService);
   protected readonly buscaService = inject(BuscaGlobalService);
   private readonly roteamentoService = inject(RoteamentoService);
+  private readonly snackBar = inject(MatSnackBar);
 
-  /** Cor da marca Movva para o traçado do trajeto (azul primário). */
-  private readonly corTrajeto = '#2e6ef5';
+  /**
+   * Cor do traçado, lida do token da marca em vez de duplicada aqui.
+   * O fallback só entra se a folha de estilo ainda não resolveu.
+   */
+  private corTrajeto(): string {
+    const valor = getComputedStyle(document.documentElement)
+      .getPropertyValue('--app-marcador-fundo')
+      .trim();
+    return valor || '#2e6ef5';
+  }
 
   // Sinais de controle
   readonly isSimulando = signal(false);
@@ -104,7 +115,7 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
   private readonly marcadoresEstaticos = new Map<string, L.Marker>();
 
   /** Silhueta de carro (branca) usada dentro do pino azul do marcador. */
-  private readonly svgCarro = `<svg viewBox="0 0 24 24" width="16" height="16" fill="#ffffff" xmlns="http://www.w3.org/2000/svg"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>`;
+  private readonly svgCarro = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>`;
 
   /** Marcador padrão: pino/círculo azul da marca com o carro branco. */
   private readonly iconeVeiculoEstatico = L.divIcon({
@@ -241,7 +252,7 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
       }
 
       const posicao: L.LatLngExpression = [veiculo.lat, veiculo.lng];
-      const conteudoTooltip = `<strong>${veiculo.marca} ${veiculo.modelo}</strong><br>${veiculo.placa} · ${veiculo.nomeMotorista}`;
+      const conteudoTooltip = this.montarTooltip(veiculo);
       const icone = veiculo.id === selecionadoId ? this.iconeVeiculoSelecionado : this.iconeVeiculoEstatico;
       const existente = this.marcadoresEstaticos.get(veiculo.id);
 
@@ -259,6 +270,47 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  /** Aviso não bloqueante, no mesmo vocabulário do resto do app. */
+  private avisar(mensagem: string): void {
+    this.snackBar.open(mensagem, 'Fechar', { duration: 5000 });
+  }
+
+  /**
+   * `GeolocationPositionError.message` vem do navegador, em inglês e técnico.
+   * O usuário precisa saber o que fazer, não o que falhou.
+   */
+  private mensagemDeErroGps(erro: GeolocationPositionError): string {
+    switch (erro.code) {
+      case erro.PERMISSION_DENIED:
+        return 'Permissão de localização negada. Autorize o acesso nas configurações do navegador.';
+      case erro.POSITION_UNAVAILABLE:
+        return 'Não foi possível determinar a posição do dispositivo.';
+      case erro.TIMEOUT:
+        return 'O dispositivo demorou demais para responder. Tente novamente.';
+      default:
+        return 'Não foi possível rastrear o dispositivo.';
+    }
+  }
+
+  /**
+   * Monta o tooltip como nós de DOM. O Leaflet aplica string de tooltip via
+   * `innerHTML`, então marca, modelo, placa e nome do motorista — todos campos
+   * preenchidos por usuário — seriam executados como HTML. `textContent` fecha
+   * essa porta sem precisar de sanitização.
+   */
+  private montarTooltip(veiculo: VeiculoComMotorista): HTMLElement {
+    const raiz = document.createElement('div');
+
+    const titulo = document.createElement('strong');
+    titulo.textContent = `${veiculo.marca} ${veiculo.modelo}`;
+
+    const detalhe = document.createElement('div');
+    detalhe.textContent = `${veiculo.placa} · ${veiculo.nomeMotorista}`;
+
+    raiz.append(titulo, detalhe);
+    return raiz;
+  }
+
   /**
    * Executa a renderização reativa da trilha (polyline + marcador pulsante)
    * do veículo selecionado. O mapa nunca recentraliza a partir daqui.
@@ -274,7 +326,7 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     if (pontos.length >= 2) {
       const latlngs = pontos.map((p) => [p.lat, p.lng] as L.LatLngExpression);
       this.polyline = L.polyline(latlngs, {
-        color: this.corTrajeto,
+        color: this.corTrajeto(),
         weight: 4,
         opacity: 0.9,
       }).addTo(this.map);
@@ -396,7 +448,7 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.sairModoReplay();
 
     if (!navigator.geolocation) {
-      alert('Seu navegador não oferece suporte para geolocalização.');
+      this.avisar('Este navegador não oferece geolocalização.');
       return;
     }
 
@@ -408,8 +460,7 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
         this.rastreamentoService.pushPoint(veiculoId, latitude, longitude);
       },
       (erro) => {
-        console.error('Erro na captura da geolocalização:', erro);
-        alert(`Erro de geolocalização: ${erro.message}`);
+        this.avisar(this.mensagemDeErroGps(erro));
         this.pararGps();
       },
       {

@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MotoristaService } from '../../services/motorista.service';
+import { ConfirmacaoService } from '../../services/confirmacao.service';
 import { Motorista } from '../../models/motorista.model';
 import { filtrarMotoristas } from '../../utils/busca.util';
 
@@ -17,6 +18,7 @@ import { filtrarMotoristas } from '../../utils/busca.util';
 })
 export class ListaMotoristasComponent {
   protected readonly motoristaService = inject(MotoristaService);
+  private readonly confirmacaoService = inject(ConfirmacaoService);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
 
   readonly colunasExibidas = ['nome', 'cpf', 'cnh', 'validadeCnh', 'contato', 'acoes'];
@@ -82,8 +84,17 @@ export class ListaMotoristasComponent {
   }
 
   removerMotorista(motorista: Motorista): void {
-    if (confirm(`Remover o motorista "${motorista.nome}"?`)) {
-      this.motoristaService.remover(motorista.id);
-    }
+    this.confirmacaoService
+      .confirmar({
+        titulo: 'Remover motorista',
+        mensagem: `${motorista.nome} será removido do cadastro. Esta ação não pode ser desfeita.`,
+        rotuloConfirmar: 'Remover',
+        perigo: true,
+      })
+      .subscribe((confirmado) => {
+        if (confirmado) {
+          this.motoristaService.remover(motorista.id);
+        }
+      });
   }
 }

@@ -3,10 +3,9 @@
     <!-- Lado Esquerdo: Marca Movva -->
     <div class="login-marca-secao">
       <div class="login-logo-container">
-        <img src="/movva-lockup.svg" alt="Movva" class="login-logo-imagem" />
+        <img src="/movva-lockup-azul.svg" alt="Movva" class="login-logo-imagem" />
       </div>
       <div class="login-marca-texto">
-        <h2>Gestão de Frota</h2>
         <p>Sua frota sob controle.</p>
       </div>
     </div>
@@ -18,7 +17,7 @@
     <div class="login-formulario-secao">
       <mat-card class="login-card">
         <mat-card-header>
-          <mat-card-title>Acessar Sistema</mat-card-title>
+          <h1 mat-card-title>Acessar Sistema</h1>
           <mat-card-subtitle>Insira suas credenciais abaixo</mat-card-subtitle>
         </mat-card-header>
 
@@ -77,8 +76,16 @@
           </form>
 
           <div class="login-links">
-            <a href="javascript:void(0)" class="login-link-esqueceu">Esqueci a minha senha</a>
+            <button type="button" class="login-link-esqueceu" (click)="esqueciSenha()">
+              Esqueci a minha senha
+            </button>
           </div>
+          @if (avisoRecuperacao()) {
+            <p class="login-aviso" role="status">
+              A recuperação de senha ainda não está disponível nesta versão. Procure o administrador
+              da frota.
+            </p>
+          }
 
           <div class="login-credenciais-dica">
             <mat-icon>info</mat-icon>
