@@ -415,4 +415,27 @@ tr.mat-mdc-header-row {
   }
 }
 
+/* ---------------------------------------------------------------
+   Alinhamento de ícones e textos em menus (mat-menu-item).
+   --------------------------------------------------------------- */
+.mat-mdc-menu-item {
+  &.mat-mdc-menu-item {
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  .mat-mdc-menu-item-text {
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  mat-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+  }
+}
+
+
 

@@ -37,6 +37,13 @@
     color var(--app-duracao-padrao) var(--app-easing);
   box-sizing: border-box;
 
+  & ::ng-deep .mat-mdc-button-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
   mat-icon {
     color: inherit;
     font-size: 20px;

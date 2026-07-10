@@ -1,12 +1,24 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
+import { AuthService } from './services/auth.service';
+import { signal } from '@angular/core';
 
 describe('AppComponent', () => {
+  let mockAuthService: any;
+
   beforeEach(async () => {
+    mockAuthService = {
+      isAuthenticated: signal(false),
+      usuarioLogado: signal({ nome: 'Admin', cargo: 'Administrador' }),
+    };
+
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: AuthService, useValue: mockAuthService },
+      ],
     }).compileComponents();
   });
 
@@ -16,7 +28,8 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the navbar', () => {
+  it('should render the navbar when authenticated', () => {
+    mockAuthService.isAuthenticated.set(true);
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
