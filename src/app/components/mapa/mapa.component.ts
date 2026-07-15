@@ -2,7 +2,6 @@ import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, inject, sig
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// Angular Material
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -55,10 +54,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
   private readonly roteamentoService = inject(RoteamentoService);
   private readonly snackBar = inject(MatSnackBar);
 
-  /**
-   * Cor do traçado, lida do token da marca em vez de duplicada aqui.
-   * O fallback só entra se a folha de estilo ainda não resolveu.
-   */
   private corTrajeto(): string {
     const valor = getComputedStyle(document.documentElement)
       .getPropertyValue('--app-marcador-fundo')
@@ -66,7 +61,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     return valor || '#2e6ef5';
   }
 
-  // Sinais de controle
   readonly isSimulando = signal(false);
   readonly isGpsAtivo = signal(false);
   readonly isCarregandoRota = signal(false);
@@ -74,7 +68,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
   readonly latManual = signal<number | null>(null);
   readonly lngManual = signal<number | null>(null);
 
-  // Replay de histórico
   readonly modoReplay = signal(false);
   readonly replayIndex = signal(0);
   readonly replayVelocidade = signal(1);
@@ -83,19 +76,16 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
 
   protected readonly veiculosComMotorista = this.veiculoService.veiculosComMotorista;
 
-  /** Veículo selecionado (para o painel de detalhe da sidebar). */
   protected readonly veiculoSelecionado = computed(() => {
     const id = this.selecaoService.veiculoSelecionadoId();
     return id ? this.veiculosComMotorista().find((v) => v.id === id) : undefined;
   });
 
-  /** Motorista selecionado sem veículo associado (fallback do painel de detalhe). */
   protected readonly motoristaSemVeiculoSelecionado = computed(() => {
     const id = this.selecaoService.motoristaSemVeiculoId();
     return id ? this.motoristaService.buscarPorId(id) : undefined;
   });
 
-  // Pontos do veículo atualmente selecionado
   readonly pontosDoVeiculoSelecionado = computed<Coordenada[]>(() => {
     const id = this.selecaoService.veiculoSelecionadoId();
     return id ? (this.rastreamentoService.pontosPorVeiculo()[id] ?? PONTOS_VAZIOS) : PONTOS_VAZIOS;
@@ -108,16 +98,13 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     return this.modoReplay() ? todos.slice(0, this.replayIndex() + 1) : todos;
   });
 
-  // Referências do Leaflet
   private map!: L.Map;
   private marker?: L.Marker;
   private polyline?: L.Polyline;
   private readonly marcadoresEstaticos = new Map<string, L.Marker>();
 
-  /** Silhueta de carro (branca) usada dentro do pino azul do marcador. */
   private readonly svgCarro = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>`;
 
-  /** Marcador padrão: pino/círculo azul da marca com o carro branco. */
   private readonly iconeVeiculoEstatico = L.divIcon({
     className: 'marcador-carro-container',
     html: `<div class="marcador-carro">${this.svgCarro}</div>`,
@@ -125,7 +112,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     iconAnchor: [15, 15],
   });
 
-  /** Marcador destacado do veículo selecionado (maior, com anel). */
   private readonly iconeVeiculoSelecionado = L.divIcon({
     className: 'marcador-carro-container',
     html: `<div class="marcador-carro marcador-carro-selecionado">${this.svgCarro}</div>`,
@@ -133,19 +119,15 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     iconAnchor: [20, 20],
   });
 
-  // Variáveis da simulação
   private simularIntervalId?: any;
   private rotaSimuladaPoints: [number, number][] = [];
   private indexSimulacao = 0;
 
-  // Variável do GPS
   private gpsWatchId?: number;
 
-  // Variável do replay
   private replayTimeoutId?: any;
 
   constructor() {
-    // Sincroniza os marcadores estáticos com a frota, a seleção e a trilha ativa
     effect(() => {
       this.veiculosComMotorista();
       this.selecaoService.veiculoSelecionadoId();
@@ -153,7 +135,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
       this.sincronizarMarcadoresEstaticos();
     });
 
-    // Redesenha a trilha (polyline + marcador vivo) do veículo selecionado
     effect(() => {
       const veiculoId = this.selecaoService.veiculoSelecionadoId();
       if (!veiculoId) {
@@ -164,7 +145,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
       this.desenharRota(this.pontosVisiveis());
     });
 
-    // Ao trocar a seleção, encerra qualquer captura em andamento
     effect(() => {
       this.selecaoService.veiculoSelecionadoId();
       this.selecaoService.motoristaSemVeiculoId();
@@ -178,7 +158,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.inicializarMapa();
     this.buscaService.definirResultadosInline(true);
 
-    // Render inicial: os effects podem ter rodado antes do mapa existir.
     this.sincronizarMarcadoresEstaticos();
     this.desenharRota(this.pontosVisiveis());
   }
@@ -194,8 +173,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // ------------------------------------------------------------ Busca sidebar
-
   aoDigitarBusca(evento: Event): void {
     this.buscaService.definirTermo((evento.target as HTMLInputElement).value);
   }
@@ -204,10 +181,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.buscaService.definirTermo('');
   }
 
-  /**
-   * Inicializa o mapa do Leaflet centralizado em Porto Alegre. O mapa nunca
-   * recentraliza sozinho depois disso — fica estático para mostrar toda a frota.
-   */
   private inicializarMapa(): void {
     const portoAlegre: L.LatLngExpression = [-30.0346, -51.2177];
 
@@ -219,11 +192,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }).addTo(this.map);
   }
 
-  /**
-   * Mantém um marcador estático por veículo cadastrado (posição de cadastro).
-   * O veículo selecionado com trilha ativa é representado pelo marcador "vivo"
-   * de `desenharRota` em vez do estático, para não duplicar o pino.
-   */
   private sincronizarMarcadoresEstaticos(): void {
     if (!this.map) return;
 
@@ -270,15 +238,10 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  /** Aviso não bloqueante, no mesmo vocabulário do resto do app. */
   private avisar(mensagem: string): void {
     this.snackBar.open(mensagem, 'Fechar', { duration: 5000 });
   }
 
-  /**
-   * `GeolocationPositionError.message` vem do navegador, em inglês e técnico.
-   * O usuário precisa saber o que fazer, não o que falhou.
-   */
   private mensagemDeErroGps(erro: GeolocationPositionError): string {
     switch (erro.code) {
       case erro.PERMISSION_DENIED:
@@ -292,12 +255,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  /**
-   * Monta o tooltip como nós de DOM. O Leaflet aplica string de tooltip via
-   * `innerHTML`, então marca, modelo, placa e nome do motorista — todos campos
-   * preenchidos por usuário — seriam executados como HTML. `textContent` fecha
-   * essa porta sem precisar de sanitização.
-   */
   private montarTooltip(veiculo: VeiculoComMotorista): HTMLElement {
     const raiz = document.createElement('div');
 
@@ -311,10 +268,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     return raiz;
   }
 
-  /**
-   * Executa a renderização reativa da trilha (polyline + marcador pulsante)
-   * do veículo selecionado. O mapa nunca recentraliza a partir daqui.
-   */
   private desenharRota(pontos: Coordenada[]): void {
     if (!this.map) return;
 
@@ -357,9 +310,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  /**
-   * Limpa todos os elementos visuais do trajeto (marcador e polyline)
-   */
   private limparCamadasMapa(): void {
     if (this.polyline) {
       this.polyline.remove();
@@ -371,12 +321,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // ------------------------------------------------------------ Simulação
-
-  /**
-   * Inicia a simulação de deslocamento com rota grudada nas ruas (OSRM),
-   * caindo para interpolação linear caso o roteamento falhe.
-   */
   async iniciarSimulacao(): Promise<void> {
     const veiculoId = this.selecaoService.veiculoSelecionadoId();
     if (!veiculoId) return;
@@ -385,7 +329,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.pararGps();
     this.sairModoReplay();
 
-    // Obtém a geometria da rota nas ruas; em falha usa o fallback linear.
     this.isCarregandoRota.set(true);
     this.usouFallback.set(false);
     try {
@@ -406,12 +349,10 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.indexSimulacao = 0;
     this.isSimulando.set(true);
 
-    // Enviar o primeiro ponto imediatamente
     const primeiroPonto = this.rotaSimuladaPoints[this.indexSimulacao];
     this.rastreamentoService.pushPoint(veiculoId, primeiroPonto[0], primeiroPonto[1]);
     this.indexSimulacao++;
 
-    // Configurar o intervalo de atualização
     this.simularIntervalId = setInterval(() => {
       if (this.indexSimulacao < this.rotaSimuladaPoints.length) {
         const pt = this.rotaSimuladaPoints[this.indexSimulacao];
@@ -423,9 +364,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }, 700);
   }
 
-  /**
-   * Interrompe a simulação
-   */
   pararSimulacao(): void {
     if (this.simularIntervalId) {
       clearInterval(this.simularIntervalId);
@@ -434,11 +372,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.isSimulando.set(false);
   }
 
-  // ------------------------------------------------------------------ GPS
-
-  /**
-   * Inicia o rastreamento via GPS do dispositivo
-   */
   iniciarGps(): void {
     const veiculoId = this.selecaoService.veiculoSelecionadoId();
     if (!veiculoId) return;
@@ -471,9 +404,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     );
   }
 
-  /**
-   * Encerra o rastreamento via GPS
-   */
   pararGps(): void {
     if (this.gpsWatchId !== undefined) {
       navigator.geolocation.clearWatch(this.gpsWatchId);
@@ -482,9 +412,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.isGpsAtivo.set(false);
   }
 
-  /**
-   * Adiciona uma coordenada manualmente informada
-   */
   adicionarPontoManual(): void {
     const veiculoId = this.selecaoService.veiculoSelecionadoId();
     const lat = this.latManual();
@@ -495,14 +422,10 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.sairModoReplay();
     this.rastreamentoService.pushPoint(veiculoId, lat, lng);
 
-    // Limpar os campos do formulário
     this.latManual.set(null);
     this.lngManual.set(null);
   }
 
-  /**
-   * Limpa a rota tracejada do veículo selecionado, mantendo a última posição ativa
-   */
   limparRota(): void {
     const veiculoId = this.selecaoService.veiculoSelecionadoId();
     if (veiculoId) {
@@ -510,8 +433,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
       this.rastreamentoService.limparRota(veiculoId);
     }
   }
-
-  // ------------------------------------------------- Replay de histórico
 
   entrarModoReplay(): void {
     if (this.totalPontos() < 2) return;
@@ -551,10 +472,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     this.replayVelocidade.set(velocidade);
   }
 
-  /**
-   * Agenda o próximo passo do replay respeitando o intervalo real entre os
-   * timestamps dos pontos, dividido pelo multiplicador de velocidade.
-   */
   private agendarProximoReplay(): void {
     const pontos = this.pontosDoVeiculoSelecionado();
     const i = this.replayIndex();
@@ -568,7 +485,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     const proximo = new Date(pontos[i + 1].timestamp).getTime();
     let delta = proximo - atual;
 
-    // Fallback e limites para manter o replay fluido e assistível.
     if (!isFinite(delta) || delta <= 0) delta = 600;
     delta = Math.min(delta, 2000);
     const espera = delta / this.replayVelocidade();
@@ -579,9 +495,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
     }, espera);
   }
 
-  /**
-   * Interpolação linear simples para suavizar o percurso da simulação (fallback)
-   */
   private interpolarRota(waypoints: [number, number][], passosPorTrecho = 12): [number, number][] {
     const pontosInterpolados: [number, number][] = [];
 
@@ -597,7 +510,6 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
       }
     }
 
-    // Adicionar o ponto final
     pontosInterpolados.push(waypoints[waypoints.length - 1]);
     return pontosInterpolados;
   }

@@ -1,11 +1,5 @@
 import { Directive, HostListener } from '@angular/core';
 
-/**
- * Máscara de digitação para datas no padrão brasileiro (DD/MM/AAAA): mantém
- * apenas dígitos (máx. 8) e insere as barras progressivamente enquanto o
- * usuário digita. Não é ControlValueAccessor — evita conflito com o
- * `MatDatepickerInput` (que continua parseando o valor formatado).
- */
 @Directive({
   selector: '[appMascaraDataBr]',
   standalone: true,

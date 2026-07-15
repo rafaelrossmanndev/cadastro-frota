@@ -45,7 +45,7 @@ export class MotoristaService {
 
   atualizar(id: string, alteracoes: DadosMotorista): void {
     this.#motoristas.update((motoristas) =>
-      motoristas.map((motorista) => (motorista.id === id ? { ...alteracoes, id } : motorista)),
+      motoristas.map((motorista) => (motorista.id === id ? { ...alteracoes, id } : motorista))
     );
   }
 

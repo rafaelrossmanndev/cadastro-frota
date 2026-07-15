@@ -24,7 +24,6 @@
   }
 }
 
-/* Dashboard Layout */
 .mapa-dashboard {
   display: grid;
   grid-template-columns: 360px 1fr;
@@ -37,14 +36,10 @@
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
-  /* Folga para o anel de foco (box-shadow 3px) da busca não ser clipado pelo
-     overflow do painel — o overflow-y:auto faz o overflow-x computar p/ auto. */
   padding: 4px;
   min-width: 0;
 }
 
-/* Barra de pesquisa da sidebar: layout do botão de limpar (o campo
-   arredondado em si vem de `.mapa-busca-campo` no styles.scss global). */
 .mapa-busca-campo button {
   width: 32px;
   height: 32px;
@@ -58,7 +53,6 @@
   }
 }
 
-/* No toque, o alvo volta aos 44px mínimos, sem alargar o campo. */
 @media (pointer: coarse) {
   .mapa-busca-campo button {
     width: 44px;
@@ -67,8 +61,6 @@
   }
 }
 
-/* Superfície em repouso: distingue-se por tom e borda de 1px, nunca por
-   sombra. O card não é clicável, então também não tem estado de hover. */
 .mapa-card {
   border: 1px solid var(--mat-sys-outline-variant);
   background-color: var(--mat-sys-surface-container-low);
@@ -100,14 +92,12 @@
   gap: 12px;
 }
 
-/* Botão "Voltar" compacto, alinhado à esquerda no topo do card */
 .mapa-btn-voltar {
   align-self: flex-start;
   color: var(--mat-sys-on-surface-variant);
   margin-left: -8px;
 }
 
-/* Painel: seções de busca / lista padrão */
 .mapa-painel-secao {
   display: flex;
   flex-direction: column;
@@ -156,7 +146,6 @@
     margin-top: 8px;
   }
 
-  /* Ícone do carro em um chip azul para mais contraste */
   mat-icon {
     font-size: 20px;
     width: 34px;
@@ -174,8 +163,6 @@
     border-color: color-mix(in srgb, var(--mat-sys-primary) 40%, var(--mat-sys-outline-variant));
   }
 
-  /* Estado selecionado (sincronizado com o marcador destacado no mapa).
-     Borda inteira + tinta de fundo, sem faixa lateral. */
   &.selecionado {
     border-color: var(--mat-sys-primary);
     background-color: var(--mat-sys-primary-container);
@@ -206,7 +193,6 @@
   }
 }
 
-/* Helpers utilitários */
 .largura-total {
   width: 100%;
 }
@@ -228,7 +214,6 @@
   margin-bottom: 8px;
 }
 
-/* Badges de Status */
 .mapa-status-badge {
   display: inline-flex;
   align-items: center;
@@ -297,7 +282,6 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
-/* Área do Mapa. A borda define; sem sombra somada a ela. */
 .mapa-container-externo {
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 16px;
@@ -312,7 +296,6 @@
   z-index: var(--app-z-mapa-canvas);
 }
 
-/* Faixa inferior: replay + ferramentas de teste */
 .mapa-faixa-inferior {
   display: flex;
   flex-direction: column;
@@ -393,7 +376,6 @@
   }
 }
 
-/* Marcador estático (posição de cadastro do veículo): carro azul da marca */
 ::ng-deep .marcador-carro-container {
   background: transparent !important;
   border: none !important;
@@ -408,7 +390,6 @@
   justify-content: center;
   background-color: var(--app-marcador-fundo);
   border: 2px solid var(--app-marcador-contorno);
-  /* O SVG do carro herda esta cor via fill="currentColor". */
   color: var(--app-marcador-contorno);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   transform: rotate(-45deg);
@@ -421,7 +402,6 @@
   }
 }
 
-/* Veículo selecionado: maior, com anel de destaque */
 ::ng-deep .marcador-carro-selecionado {
   width: 40px;
   height: 40px;
@@ -436,7 +416,6 @@
   }
 }
 
-/* Estilo do Marcador Pulsante Personalizado (veículo selecionado com trilha ativa) */
 ::ng-deep .marcador-pulsante-container {
   position: relative;
   width: 24px !important;
@@ -479,9 +458,6 @@
   }
 }
 
-/* O anel do GPS para de pulsar, mas continua como halo estático: ele é parte
-   de como o marcador ativo se distingue dos demais. Zerar a animação sem isto
-   o deixaria no último keyframe, invisível. */
 @media (prefers-reduced-motion: reduce) {
   ::ng-deep .marcador-pulsante-anel {
     animation: none !important;
@@ -490,7 +466,6 @@
   }
 }
 
-/* Responsividade */
 @media (max-width: 1024px) {
   .mapa-dashboard {
     grid-template-columns: 1fr;

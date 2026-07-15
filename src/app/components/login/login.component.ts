@@ -44,10 +44,6 @@ export class LoginComponent {
     this.senhaVisivel.update((visivel) => !visivel);
   }
 
-  /**
-   * Não existe fluxo de recuperação nesta versão. Dizer isso é melhor que um
-   * link que não vai a lugar nenhum.
-   */
   esqueciSenha(): void {
     this.avisoRecuperacao.set(true);
   }

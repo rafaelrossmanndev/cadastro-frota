@@ -3,7 +3,6 @@
     <h1>Motoristas</h1>
 
     <div class="lista-acoes">
-      <!-- Barra de busca (somente motoristas) + dropdown de sugestões -->
       <div class="lista-busca">
         <div class="lista-busca-campo">
           <mat-icon>search</mat-icon>
@@ -50,7 +49,6 @@
     </div>
   </div>
 
-  <!-- Visualização Desktop (Tabela) -->
   <div class="lista-motoristas-desktop-container">
     <table mat-table [dataSource]="motoristasFiltrados()" class="lista-motoristas-tabela tabela-colorida">
       <ng-container matColumnDef="nome">
@@ -117,7 +115,6 @@
     </table>
   </div>
 
-  <!-- Visualização Mobile (Lista de Cards) -->
   <div class="lista-motoristas-mobile-container">
     @for (motorista of motoristasFiltrados(); track motorista.id) {
       <div class="card-motorista-mobile">

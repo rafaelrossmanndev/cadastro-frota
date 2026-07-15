@@ -1,13 +1,6 @@
 import { Motorista } from '../models/motorista.model';
 import { VeiculoComMotorista } from '../models/veiculo.model';
 
-/**
- * Predicados de busca compartilhados entre a busca global (header/mapa) e as
- * buscas locais das telas de lista (motoristas / frota). Centralizar aqui evita
- * divergência das regras de normalização (CPF só dígitos, placa alfanumérica).
- */
-
-/** Filtra motoristas por nome (substring) ou CPF (apenas dígitos). */
 export function filtrarMotoristas(motoristas: readonly Motorista[], termo: string): Motorista[] {
   const alvo = termo.trim().toLowerCase();
   if (!alvo) return [...motoristas];
@@ -21,7 +14,6 @@ export function filtrarMotoristas(motoristas: readonly Motorista[], termo: strin
   });
 }
 
-/** Filtra veículos por "marca modelo", nome do motorista ou placa (alfanumérica). */
 export function filtrarVeiculos(
   veiculos: readonly VeiculoComMotorista[],
   termo: string,

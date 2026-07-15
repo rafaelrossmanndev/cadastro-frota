@@ -13,7 +13,7 @@ export class VeiculoService {
     this.#veiculos().map((veiculo) => ({
       ...veiculo,
       nomeMotorista: this.motoristaService.buscarPorId(veiculo.motoristaId)?.nome ?? 'Motorista não encontrado',
-    })),
+    }))
   );
 
   constructor(private readonly motoristaService: MotoristaService) {
@@ -52,14 +52,18 @@ export class VeiculoService {
   }
 
   adicionar(dados: DadosVeiculo): Veiculo {
-    const veiculo: Veiculo = { ...dados, id: crypto.randomUUID(), ...gerarCoordenadaAleatoriaPortoAlegre() };
+    const veiculo: Veiculo = {
+      ...dados,
+      id: crypto.randomUUID(),
+      ...gerarCoordenadaAleatoriaPortoAlegre(),
+    };
     this.#veiculos.update((veiculos) => [...veiculos, veiculo]);
     return veiculo;
   }
 
   atualizar(id: string, alteracoes: DadosVeiculo): void {
     this.#veiculos.update((veiculos) =>
-      veiculos.map((veiculo) => (veiculo.id === id ? { ...veiculo, ...alteracoes, id } : veiculo)),
+      veiculos.map((veiculo) => (veiculo.id === id ? { ...veiculo, ...alteracoes, id } : veiculo))
     );
   }
 

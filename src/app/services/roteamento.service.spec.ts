@@ -28,7 +28,6 @@ describe('RoteamentoService', () => {
 
     const req = httpMock.expectOne((r) => r.url.includes('router.project-osrm.org'));
     expect(req.request.method).toBe('GET');
-    // A URL usa a ordem lng,lat exigida pelo OSRM.
     expect(req.request.urlWithParams).toContain('-51.2177,-30.0346');
 
     req.flush({
@@ -76,7 +75,6 @@ describe('RoteamentoService', () => {
       expect(resultado.length).toBe(3);
       expect(resultado[0]).toEqual([0, 0]);
       expect(resultado[2]).toEqual([0, 4]);
-      // O ponto do meio fica na metade da distância total.
       expect(resultado[1][1]).toBeCloseTo(2, 5);
     });
   });

@@ -22,20 +22,16 @@ export class ListaVeiculosComponent {
 
   readonly colunasExibidas = ['placa', 'veiculo', 'anoFabricacao', 'cor', 'motorista', 'acoes'];
 
-  /** Texto ao vivo (dirige o dropdown de sugestões). */
   protected readonly termoBusca = signal('');
-  /** Termo confirmado no Enter/seleção (filtra a tabela). */
   protected readonly termoAplicado = signal('');
   protected readonly dropdownAberto = signal(false);
 
-  /** Sugestões exibidas no dropdown enquanto digita (apenas veículos). */
   protected readonly sugestoes = computed<VeiculoComMotorista[]>(() => {
     const termo = this.termoBusca().trim();
     if (!termo) return [];
     return filtrarVeiculos(this.veiculoService.veiculosComMotorista(), termo);
   });
 
-  /** Lista aplicada à tabela (vazio = todos). */
   protected readonly veiculosFiltrados = computed<VeiculoComMotorista[]>(() =>
     filtrarVeiculos(this.veiculoService.veiculosComMotorista(), this.termoAplicado()),
   );

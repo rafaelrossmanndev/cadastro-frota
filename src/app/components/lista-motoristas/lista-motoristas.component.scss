@@ -40,8 +40,6 @@
   font-weight: 500;
 }
 
-/* A tabela rola dentro do próprio contêiner. Sem isto, uma coluna a mais
-   empurraria a página inteira para o lado. */
 .lista-motoristas-desktop-container {
   display: block;
   overflow-x: auto;
@@ -148,5 +146,3 @@
     padding-top: 8px;
   }
 }
-
-

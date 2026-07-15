@@ -23,20 +23,16 @@ export class ListaMotoristasComponent {
 
   readonly colunasExibidas = ['nome', 'cpf', 'cnh', 'validadeCnh', 'contato', 'acoes'];
 
-  /** Texto ao vivo (dirige o dropdown de sugestões). */
   protected readonly termoBusca = signal('');
-  /** Termo confirmado no Enter/seleção (filtra a tabela). */
   protected readonly termoAplicado = signal('');
   protected readonly dropdownAberto = signal(false);
 
-  /** Sugestões exibidas no dropdown enquanto digita (apenas motoristas). */
   protected readonly sugestoes = computed<Motorista[]>(() => {
     const termo = this.termoBusca().trim();
     if (!termo) return [];
     return filtrarMotoristas(this.motoristaService.motoristas(), termo);
   });
 
-  /** Lista aplicada à tabela (vazio = todos). */
   protected readonly motoristasFiltrados = computed<Motorista[]>(() =>
     filtrarMotoristas(this.motoristaService.motoristas(), this.termoAplicado()),
   );

@@ -15,6 +15,7 @@ export class AuthService {
   readonly #usuarioLogado = signal<UsuarioAutenticado | null>(null);
 
   readonly usuarioLogado = this.#usuarioLogado.asReadonly();
+
   readonly isAuthenticated = computed(() => this.#usuarioLogado() !== null);
 
   constructor() {
@@ -22,7 +23,6 @@ export class AuthService {
   }
 
   login(usuario: string, senha: string): Observable<boolean> {
-    // Simula validação com atraso de rede
     const sucesso = usuario.trim().toLowerCase() === 'admin' && senha === 'admin123';
 
     return of(sucesso).pipe(

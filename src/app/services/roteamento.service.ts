@@ -4,11 +4,10 @@ import { firstValueFrom } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { PontoGeo } from '../models/geo.model';
 
-/** Resposta parcial da API de rotas do OSRM que nos interessa. */
 interface RespostaOsrm {
   code: string;
   routes?: {
-    geometry: { coordinates: [number, number][] }; // pares [lng, lat]
+    geometry: { coordinates: [number, number][] };
   }[];
 }
 
@@ -21,20 +20,11 @@ const TIMEOUT_MS = 8000;
 export class RoteamentoService {
   private readonly http = inject(HttpClient);
 
-  /**
-   * Consulta o OSRM para obter a geometria da rota que segue as ruas entre os
-   * waypoints informados (road snapping). Retorna a lista de pontos [lat, lng]
-   * já reamostrada para uma quantidade uniforme, adequada ao playback.
-   *
-   * Lança erro em caso de falha de rede/timeout/rota inválida — o chamador deve
-   * ter um fallback (ex.: interpolação linear).
-   */
   async obterRotaRodoviaria(pontos: PontoGeo[], amostras = 70): Promise<[number, number][]> {
     if (pontos.length < 2) {
       throw new Error('São necessários ao menos dois pontos para traçar uma rota.');
     }
 
-    // OSRM espera os pares no formato lng,lat separados por ';'
     const coordenadas = pontos.map((p) => `${p.lng},${p.lat}`).join(';');
     const url = `${OSRM_BASE}/${coordenadas}?overview=full&geometries=geojson`;
 
@@ -46,7 +36,6 @@ export class RoteamentoService {
       throw new Error(`OSRM não retornou uma rota válida (code: ${resposta.code}).`);
     }
 
-    // GeoJSON entrega [lng, lat]; invertemos para [lat, lng] usado pelo Leaflet.
     const geometria: [number, number][] = resposta.routes[0].geometry.coordinates.map(
       ([lng, lat]) => [lat, lng]
     );
@@ -54,15 +43,9 @@ export class RoteamentoService {
     return this.reamostrarPorDistancia(geometria, amostras);
   }
 
-  /**
-   * Reamostra uma polilinha densa para `n` pontos igualmente espaçados por
-   * distância acumulada, garantindo um deslocamento visualmente constante
-   * durante a simulação.
-   */
   reamostrarPorDistancia(pontos: [number, number][], n: number): [number, number][] {
     if (pontos.length <= 2 || n <= 2) return pontos;
 
-    // Distâncias acumuladas ao longo da polilinha.
     const acumulado: number[] = [0];
     for (let i = 1; i < pontos.length; i++) {
       acumulado.push(acumulado[i - 1] + this.distancia(pontos[i - 1], pontos[i]));
@@ -77,7 +60,6 @@ export class RoteamentoService {
     for (let i = 0; i < n; i++) {
       const alvo = (total * i) / (n - 1);
 
-      // Avança até o segmento que contém a distância alvo.
       while (seg < acumulado.length - 2 && acumulado[seg + 1] < alvo) {
         seg++;
       }
@@ -96,7 +78,6 @@ export class RoteamentoService {
     return resultado;
   }
 
-  /** Distância euclidiana simples em graus — suficiente para reamostragem local. */
   private distancia(a: [number, number], b: [number, number]): number {
     const dLat = b[0] - a[0];
     const dLng = b[1] - a[1];

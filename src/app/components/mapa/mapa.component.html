@@ -1,15 +1,11 @@
 <div class="mapa-tela">
-  <!-- Cabeçalho Principal -->
   <div class="mapa-cabecalho">
     <h1>Rastreamento da Frota</h1>
     <span class="mapa-subtitulo">Gerencie e monitore as unidades da frota em tempo real</span>
   </div>
 
-  <!-- Layout Principal (Painel + Mapa) -->
   <div class="mapa-dashboard">
-    <!-- Painel Lateral: busca / seleção / lista padrão -->
     <div class="mapa-painel-controles">
-      <!-- Barra de pesquisa (motoristas + veículos) -->
       <div class="mapa-busca-campo">
         <mat-icon>search</mat-icon>
         <label class="apenas-leitor-de-tela" for="busca-mapa">Buscar motorista ou veículo</label>
@@ -28,7 +24,6 @@
       </div>
 
       @if (buscaService.termo()) {
-        <!-- Resultados de busca -->
         <div class="mapa-painel-secao">
           <h2 class="mapa-painel-titulo">Resultados da busca</h2>
 
@@ -61,7 +56,6 @@
           }
         </div>
       } @else if (veiculoSelecionado() || motoristaSemVeiculoSelecionado()) {
-        <!-- Detalhe do item selecionado -->
         <mat-card class="mapa-card">
           <mat-card-header>
             @if (veiculoSelecionado(); as veiculo) {
@@ -150,7 +144,6 @@
           </mat-card-content>
         </mat-card>
       } @else {
-        <!-- Lista padrão: todos os veículos, clicáveis -->
         <div class="mapa-painel-secao">
           <h2 class="mapa-painel-titulo">Veículos da frota</h2>
 
@@ -172,13 +165,11 @@
       }
     </div>
 
-    <!-- Div do Container do Leaflet -->
     <div class="mapa-container-externo">
       <div #mapContainer class="mapa-leaflet-canvas"></div>
     </div>
   </div>
 
-  <!-- Faixa inferior: replay + ferramentas de teste -->
   <div class="mapa-faixa-inferior">
     @if (veiculoSelecionado() && totalPontos() >= 2) {
       <mat-card class="mapa-card">

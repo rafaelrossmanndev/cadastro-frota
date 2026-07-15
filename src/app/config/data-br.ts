@@ -1,11 +1,6 @@
 import { NativeDateAdapter } from '@angular/material/core';
 import { MatDateFormats } from '@angular/material/core';
 
-/**
- * Adaptador de data no padrão brasileiro (DD/MM/AAAA). O adaptador nativo do
- * Material formata/parseia via `Date.parse`, que interpreta strings como MM/DD.
- * Aqui sobrescrevemos `parse`/`format` para o formato DD/MM/AAAA.
- */
 export class DataAdaptadorBr extends NativeDateAdapter {
   override parse(value: unknown): Date | null {
     if (typeof value === 'string') {
@@ -27,7 +22,6 @@ export class DataAdaptadorBr extends NativeDateAdapter {
   }
 }
 
-/** Formatos de data (entrada/exibição) no padrão brasileiro. */
 export const FORMATOS_DATA_BR: MatDateFormats = {
   parse: {
     dateInput: 'DD/MM/YYYY',

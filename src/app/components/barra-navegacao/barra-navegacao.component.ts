@@ -29,7 +29,6 @@ export class BarraNavegacaoComponent {
   protected readonly temaService = inject(TemaService);
   private readonly confirmacaoService = inject(ConfirmacaoService);
 
-  /** Ícone do botão de tema conforme o modo atual. */
   protected readonly iconeTema = computed(() => {
     switch (this.temaService.modo()) {
       case 'claro':
@@ -41,10 +40,6 @@ export class BarraNavegacaoComponent {
     }
   });
 
-  /**
-   * O ícone do botão de tema é `aria-hidden`, então o modo atual só chega ao
-   * leitor de tela pelo nome acessível do botão.
-   */
   protected readonly rotuloTema = computed(() => {
     switch (this.temaService.modo()) {
       case 'claro':

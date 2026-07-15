@@ -7,11 +7,6 @@ import { Motorista } from '../models/motorista.model';
 import { VeiculoComMotorista } from '../models/veiculo.model';
 import { filtrarMotoristas, filtrarVeiculos } from '../utils/busca.util';
 
-/**
- * Busca unificada (motoristas + veículos) usada pelo header. `resultadosInline`
- * indica se a tela atual (Home) já exibe os resultados na própria sidebar —
- * nesse caso o dropdown flutuante do header não precisa aparecer.
- */
 @Injectable({ providedIn: 'root' })
 export class BuscaGlobalService {
   private readonly motoristaService = inject(MotoristaService);

@@ -3,7 +3,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
-/** Texto de uma confirmação. `perigo` pinta a ação de vermelho semântico. */
 export interface DadosDialogoConfirmacao {
   titulo: string;
   mensagem: string;
@@ -11,13 +10,6 @@ export interface DadosDialogoConfirmacao {
   perigo?: boolean;
 }
 
-/**
- * Confirmação de ação destrutiva. Substitui o `confirm()` nativo, que rompe a
- * identidade visual exatamente no momento mais tenso do fluxo.
- *
- * O foco inicial vai para "Cancelar", não para a ação destrutiva: um Enter
- * apressado não pode apagar um cadastro.
- */
 @Component({
   selector: 'app-dialogo-confirmacao',
   imports: [MatDialogModule, MatButtonModule, MatIconModule],

@@ -8,7 +8,6 @@
   flex: 1 1 auto;
 }
 
-// Navegação em formato "segmented control" (menu destacado com borda + sombra interna)
 .barra-navegacao-nav {
   display: inline-flex;
   align-items: center;
@@ -74,7 +73,6 @@
   }
 }
 
-// Botões de ícone do header (tema, perfil) — alinhados e consistentes
 .barra-navegacao-tema,
 .barra-navegacao-perfil {
   display: inline-flex;
@@ -98,7 +96,6 @@
   margin-left: 8px;
 }
 
-// Botão hambúrguer: só existe no mobile, escondido por padrão no desktop.
 .barra-navegacao-hamburguer {
   display: none;
 }
@@ -125,7 +122,6 @@
   margin-top: 2px;
 }
 
-// Responsividade Mobile
 @media (max-width: 768px) {
   .barra-navegacao-nav {
     display: none;

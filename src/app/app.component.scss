@@ -1,5 +1,3 @@
-/* O <main> é alvo do skip link; `tabindex="-1"` o torna focável por
-   programa, e sem isto o Chrome não move o foco de teclado ao pular. */
 main:focus {
   outline: none;
 }

@@ -48,14 +48,12 @@ export class FormularioVeiculoComponent {
 
   readonly motoristas = this.motoristaService.motoristas;
 
-  /** Campo de texto/seleção do autocomplete (guarda a string digitada ou o Motorista escolhido). */
   readonly controleBuscaMotorista = new FormControl<string | Motorista>('', { nonNullable: true });
 
   private readonly termoMotorista = toSignal(this.controleBuscaMotorista.valueChanges, {
     initialValue: '' as string | Motorista,
   });
 
-  /** Motoristas filtrados por nome enquanto digita (reutiliza a util de busca). */
   readonly motoristasFiltrados = computed<Motorista[]>(() => {
     const valor = this.termoMotorista();
     const termo = typeof valor === 'string' ? valor : (valor?.nome ?? '');
@@ -74,7 +72,6 @@ export class FormularioVeiculoComponent {
     motoristaId: new FormControl<string | null>(null, { validators: [Validators.required] }),
   });
 
-  /** Exibe o nome do motorista selecionado no input do autocomplete. */
   readonly exibirMotorista = (motorista: Motorista | string | null): string =>
     motorista && typeof motorista !== 'string' ? motorista.nome : '';
 
@@ -86,7 +83,6 @@ export class FormularioVeiculoComponent {
       }
     });
 
-    // Texto livre (sem opção escolhida) invalida a seleção para o `required` continuar valendo.
     this.controleBuscaMotorista.valueChanges.pipe(takeUntilDestroyed()).subscribe((valor) => {
       if (typeof valor === 'string') {
         this.formulario.controls.motoristaId.setValue(null);

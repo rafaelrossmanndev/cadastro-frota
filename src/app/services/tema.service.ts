@@ -8,18 +8,14 @@ const CHAVE_TEMA = 'cadastro-frota-tema';
 })
 export class TemaService {
   readonly #modo = signal<ModoTema>('sistema');
+
   readonly modo = this.#modo.asReadonly();
 
-  /** Lê a preferência salva e aplica. Chamado no boot. */
   inicializar(): void {
     const salvo = localStorage.getItem(CHAVE_TEMA) as ModoTema | null;
     this.definir(this.ehModoValido(salvo) ? salvo : 'sistema');
   }
 
-  /**
-   * Define o tema. 'sistema' segue o SO (remove o atributo);
-   * 'claro'/'escuro' forçam o color-scheme via data-theme no <html>.
-   */
   definir(modo: ModoTema): void {
     this.#modo.set(modo);
 

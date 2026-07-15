@@ -3,7 +3,6 @@
     <h1>Frota</h1>
 
     <div class="lista-acoes">
-      <!-- Barra de busca (somente veículos) + dropdown de sugestões -->
       <div class="lista-busca">
         <div class="lista-busca-campo">
           <mat-icon>search</mat-icon>
@@ -50,7 +49,6 @@
     </div>
   </div>
 
-  <!-- Visualização Desktop (Tabela) -->
   <div class="lista-veiculos-desktop-container">
     <table mat-table [dataSource]="veiculosFiltrados()" class="lista-veiculos-tabela tabela-colorida">
       <ng-container matColumnDef="placa">
@@ -105,7 +103,6 @@
     </table>
   </div>
 
-  <!-- Visualização Mobile (Lista de Cards) -->
   <div class="lista-veiculos-mobile-container">
     @for (veiculo of veiculosFiltrados(); track veiculo.id) {
       <div class="card-veiculo-mobile">

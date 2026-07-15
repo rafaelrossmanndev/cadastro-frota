@@ -10,8 +10,6 @@
   box-sizing: border-box;
 }
 
-/* Superfície em repouso: borda de 1px define o limite, sem sombra somada.
-   Raio no teto de 16px da escala de cartões. */
 .login-wrapper {
   display: flex;
   flex-direction: row;
@@ -82,7 +80,6 @@
     padding: 0 0 24px 0;
     margin: 0;
 
-    /* O título é o <h1> da página; zera a margem do heading. */
     [mat-card-title] {
       font-size: 1.6rem;
       font-weight: 700;
@@ -135,7 +132,6 @@
   margin-top: 16px;
 }
 
-/* É um <button>: aciona um comportamento, não navega. Aparência de link. */
 .login-link-esqueceu {
   padding: 4px;
   border: none;
@@ -188,7 +184,6 @@
   }
 }
 
-// MEDIA QUERIES PARA MOBILE
 @media (max-width: 768px) {
   .login-wrapper {
     flex-direction: column;
