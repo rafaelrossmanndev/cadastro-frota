@@ -1,10 +1,10 @@
-# 🚚 Movva · Gestão de Frota
+# Movva · Gestão de Frota
 
 Aplicação web para gestão de frotas: cadastro de **motoristas** e **veículos**, com um **mapa de rastreamento** que simula o deslocamento das unidades em tempo real. Roda inteiramente no frontend — os dados vivem em memória (via Angular Signals) e persistem no `localStorage`, sem backend.
 
 🔗 **Deploy:** https://cadastro-frota.vercel.app/login
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - **Autenticação simulada** com proteção de rotas (`authGuard` / `guestGuard`) e sessão persistida.
 - **CRUD de motoristas** com validação de CPF, categoria e validade de CNH.
@@ -14,7 +14,7 @@ Aplicação web para gestão de frotas: cadastro de **motoristas** e **veículos
 - **Tema** claro, escuro ou automático (conforme o sistema), com preferência salva.
 - **Layout responsivo**: tabelas viram cartões no mobile.
 
-## 🛠️ Stack
+## Stack
 
 - **Angular 19** — standalone components, Signals e novo control flow (`@if` / `@for`)
 - **Angular Material 3** — tema customizado com as cores da marca Movva
@@ -23,13 +23,13 @@ Aplicação web para gestão de frotas: cadastro de **motoristas** e **veículos
 - **ngx-mask** — máscaras de CPF, telefone e CNH
 - **Sass (SCSS)** — estilos e responsividade
 
-## 🔑 Credenciais de teste
+## Credenciais de teste
 
 | Usuário | Senha      |
 | ------- | ---------- |
 | `admin` | `admin123` |
 
-## 🚀 Executando localmente
+## Executando localmente
 
 Requer **Node 22** (veja o `.nvmrc`).
 
@@ -40,7 +40,7 @@ npm start
 
 Acesse `http://localhost:4200` — a aplicação redireciona para `/login`.
 
-## 📁 Estrutura
+## Estrutura
 
 ```
 src/app/
